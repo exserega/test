@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Library - Modern Music Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .chord {
+            color: #3b82f6;
+            font-weight: bold;
+            position: relative;
+            top: -0.5em;
+            font-size: 0.8em;
+        }
+        .song-line {
+            line-height: 2.5em;
+            white-space: pre-wrap;
+        }
+        .transposed {
+            background-color: rgba(59, 130, 246, 0.1);
+            transition: background-color 0.3s;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .sidebar {
+            transition: transform 0.3s ease;
+        }
+        .sidebar-hidden {
+            transform: translateX(-100%);
+        }
+        .playlist-modal {
+            transition: all 0.3s ease;
+        }
+        .playlist-modal-hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Firebase and Google Sheets configuration -->
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBlkjVQFtFpMRFexAi6nBqEkIfjFlU5cDo",
+            authDomain: "song-archive-389a6.firebaseapp.com",
+            projectId: "song-archive-389a6",
+            storageBucket: "song-archive-389a6.appspot.com",
+            messagingSenderId: "619735277668",
+            appId: "1:619735277668:web:51d2684bd8d4444eaf3f71",
+            measurementId: "G-Z6QYH5YD2E"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Google Sheets configuration
+        const API_KEY = 'AIzaSyDO2gwifAnZzC3ooJ0A_4vAD76iYakwzlk';
+        const SHEET_ID = '1C3gFjj9LAub_Nk9ogqKp3LKpdAxq6j8xlPAsc8OmM5s';
+        const SHEETS = {
+            'Быстрые (вертикаль)': 'Быстрые (вертикаль)',
+            'Быстрые (горизонталь)': 'Быстрые (горизонталь)',
+            'Поклонение (вертикаль)': 'Поклонение (вертикаль)',
+            'Поклонение (горизонталь)': 'Поклонение (горизонталь)'
+        };
+    </script>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full z-10">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <button onclick="toggleSidebar()" class="md:hidden mr-2 text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fas fa-music text-blue-500 text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-gray-800">Song Library</span>
+                    </div>
+                    <div class="hidden md:ml-6 md:flex md:space-x-8">
+                        <a href="#" class="border-blue-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium" onclick="showHome()">
+                            Home
+                        </a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium" onclick="showPlaylists()">
+                            Playlists
+                        </a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium" onclick="showArtists()">
+                            Artists
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="relative mx-4">
+                        <input type="text" id="search" placeholder="Search songs..." class="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <div class="absolute left-3 top-2.5 text-gray-400">
+                            <i class="fas fa-search"></i>
+                        </div>
+                    </div>
+                    <button onclick="showPlaylistModal()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center transition-colors">
+                        <i class="fas fa-plus mr-2"></i>
+                        <span class="hidden md:inline">New Playlist</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="fixed inset-y-0 left-0 transform md:translate-x-0 sidebar bg-white w-64 shadow-lg z-20 pt-16 sidebar-hidden md:sidebar-hidden" id="sidebar">
+        <div class="h-full overflow-y-auto">
+            <div class="px-4 py-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Categories</h3>
+                <ul class="space-y-2">
+                    <li>
+                        <button onclick="loadCategory('Быстрые (вертикаль)')" class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 flex items-center">
+                            <i class="fas fa-bolt text-yellow-500 mr-2"></i>
+                            <span>Fast (Vertical)</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="loadCategory('Быстрые (горизонталь)')" class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 flex items-center">
+                            <i class="fas fa-bolt text-yellow-500 mr-2"></i>
+                            <span>Fast (Horizontal)</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="loadCategory('Поклонение (вертикаль)')" class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 flex items-center">
+                            <i class="fas fa-hands-praying text-blue-500 mr-2"></i>
+                            <span>Worship (Vertical)</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="loadCategory('Поклонение (горизонталь)')" class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 flex items-center">
+                            <i class="fas fa-hands-praying text-blue-500 mr-2"></i>
+                            <span>Worship (Horizontal)</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            <div class="px-4 py-6 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Recent Playlists</h3>
+                <ul class="space-y-2" id="recent-playlists">
+                    <!-- Will be populated by JavaScript -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay for mobile sidebar -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Main Content -->
+    <main class="pt-20 pb-10 px-4 max-w-7xl mx-auto md:ml-64 transition-all duration-300">
+        <!-- Home View -->
+        <div id="home-view">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Featured Songs</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="featured-songs">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Popular Artists</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4" id="popular-artists">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Song Detail View -->
+        <div id="song-view" class="hidden">
+            <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+                <div class="md:flex">
+                    <div class="md:w-1/3 p-6">
+                        <div class="aspect-w-1 aspect-h-1">
+                            <img id="song-image" src="https://via.placeholder.com/400x400" alt="Song cover" class="object-cover rounded-lg w-full">
+                        </div>
+                        <div class="mt-4">
+                            <h2 id="song-title" class="text-2xl font-bold text-gray-800"></h2>
+                            <p id="song-artist" class="text-gray-600"></p>
+                            <p id="song-bpm" class="text-gray-500 mt-2"></p>
+                            <p id="song-key" class="text-gray-500"></p>
+                            
+                            <div class="mt-4 flex space-x-2">
+                                <a id="youtube-link" href="#" target="_blank" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center transition-colors">
+                                    <i class="fab fa-youtube mr-2"></i> YouTube
+                                </a>
+                                <a id="holychords-link" href="#" target="_blank" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center transition-colors">
+                                    <i class="fas fa-link mr-2"></i> HolyChords
+                                </a>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <button onclick="addToCurrentPlaylist()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center transition-colors w-full justify-center">
+                                    <i class="fas fa-plus mr-2"></i> Add to Playlist
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:w-2/3 p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-semibold text-gray-800">Lyrics & Chords</h3>
+                            <div class="flex items-center">
+                                <label for="transpose" class="mr-2 text-gray-700">Transpose:</label>
+                                <select id="transpose" class="border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="transposeSong()">
+                                    <option value="0">Original</option>
+                                    <option value="1">+1</option>
+                                    <option value="2">+2</option>
+                                    <option value="-1">-1</option>
+                                    <option value="-2">-2</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <div id="song-content" class="font-mono text-gray-800 whitespace-pre-wrap">
+                                <!-- Song content will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <h4 class="text-lg font-medium text-gray-800 mb-2">Video</h4>
+                            <div class="aspect-w-16 aspect-h-9">
+                                <iframe id="song-video" class="w-full h-64 md:h-80 rounded-lg" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Playlists View -->
+        <div id="playlists-view" class="hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Your Playlists</h2>
+                <button onclick="showPlaylistModal()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center transition-colors">
+                    <i class="fas fa-plus mr-2"></i> New Playlist
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="user-playlists">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Playlist Detail View -->
+        <div id="playlist-view" class="hidden">
+            <div class="flex items-center mb-6">
+                <button onclick="showPlaylists()" class="mr-4 text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-arrow-left text-xl"></i>
+                </button>
+                <h2 id="playlist-title" class="text-2xl font-bold text-gray-800"></h2>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+                <div class="p-6">
+                    <div id="playlist-songs">
+                        <!-- Playlist songs will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Artists View -->
+        <div id="artists-view" class="hidden">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Artists</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4" id="all-artists">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Artist Detail View -->
+        <div id="artist-view" class="hidden">
+            <div class="flex items-center mb-6">
+                <button onclick="showArtists()" class="mr-4 text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-arrow-left text-xl"></i>
+                </button>
+                <h2 id="artist-name" class="text-2xl font-bold text-gray-800"></h2>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Songs</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="artist-songs">
+                        <!-- Artist songs will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Playlist Modal -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30 playlist-modal playlist-modal-hidden" id="playlist-modal">
+        <div class="bg-white rounded-xl shadow-xl p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Create New Playlist</h3>
+                <button onclick="hidePlaylistModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="mb-4">
+                <label for="playlist-name" class="block text-gray-700 mb-2">Playlist Name</label>
+                <input type="text" id="playlist-name" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="My Awesome Playlist">
+            </div>
+            
+            <div class="mb-4">
+                <label for="playlist-description" class="block text-gray-700 mb-2">Description (optional)</label>
+                <textarea id="playlist-description" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="3" placeholder="What's this playlist about?"></textarea>
+            </div>
+            
+            <div class="flex justify-end space-x-3">
+                <button onclick="hidePlaylistModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                    Cancel
+                </button>
+                <button onclick="createPlaylist()" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors">
+                    Create
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Playlist Floating Button -->
+    <div class="fixed bottom-6 right-6 z-20">
+        <button onclick="toggleCurrentPlaylist()" class="bg-blue-500 hover:bg-blue-600 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition-colors">
+            <i class="fas fa-list-ol text-xl"></i>
+            <span id="playlist-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center hidden">0</span>
+        </button>
+    </div>
+
+    <!-- Current Playlist Panel -->
+    <div class="fixed bottom-20 right-6 w-80 bg-white rounded-t-lg shadow-xl z-20 hidden" id="current-playlist">
+        <div class="flex justify-between items-center bg-blue-500 text-white px-4 py-3 rounded-t-lg">
+            <h3 class="font-medium">Current Playlist</h3>
+            <button onclick="toggleCurrentPlaylist()" class="text-white hover:text-blue-100">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="max-h-96 overflow-y-auto p-4">
+            <ul id="current-playlist-songs" class="space-y-2">
+                <!-- Current playlist songs will be shown here -->
+            </ul>
+        </div>
+        
+        <div class="p-4 border-t">
+            <button onclick="saveCurrentPlaylist()" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg flex items-center justify-center transition-colors">
+                <i class="fas fa-save mr-2"></i> Save Playlist
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentView = 'home';
+        let currentSong = null;
+        let currentPlaylist = [];
+        let allSongs = [];
+        let artists = [];
+        let playlists = [];
+        let currentPlaylistId = null;
+        
+        // DOM elements
+        const homeView = document.getElementById('home-view');
+        const songView = document.getElementById('song-view');
+        const playlistsView = document.getElementById('playlists-view');
+        const playlistView = document.getElementById('playlist-view');
+        const artistsView = document.getElementById('artists-view');
+        const artistView = document.getElementById('artist-view');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const playlistModal = document.getElementById('playlist-modal');
+        const currentPlaylistPanel = document.getElementById('current-playlist');
+        const playlistCount = document.getElementById('playlist-count');
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load data from Google Sheets
+            loadSongsFromGoogleSheets();
+            
+            // Load playlists from Firestore
+            loadPlaylists();
+            
+            // Setup event listeners
+            document.getElementById('search').addEventListener('input', searchSongs);
+            
+            // Show home view by default
+            showHome();
+        });
+        
+        // View management functions
+        function showHome() {
+            hideAllViews();
+            homeView.classList.remove('hidden');
+            currentView = 'home';
+            updateActiveNavLink();
+        }
+        
+        function showSong(song) {
+            hideAllViews();
+            songView.classList.remove('hidden');
+            currentView = 'song';
+            currentSong = song;
+            updateActiveNavLink();
+            
+            // Update song details
+            document.getElementById('song-title').textContent = song.title;
+            document.getElementById('song-artist').textContent = song.artist || 'Unknown Artist';
+            document.getElementById('song-bpm').textContent = song.bpm ? `BPM: ${song.bpm}` : '';
+            document.getElementById('song-key').textContent = song.key ? `Original Key: ${song.key}` : '';
+            
+            // Update links
+            const youtubeLink = document.getElementById('youtube-link');
+            const holychordsLink = document.getElementById('holychords-link');
+            
+            if (song.youtube) {
+                youtubeLink.href = song.youtube;
+                youtubeLink.classList.remove('hidden');
+                document.getElementById('song-video').src = song.youtube.replace('watch?v=', 'embed/');
+            } else {
+                youtubeLink.classList.add('hidden');
+                document.getElementById('song-video').src = '';
+            }
+            
+            if (song.holychords) {
+                holychordsLink.href = song.holychords;
+                holychordsLink.classList.remove('hidden');
+            } else {
+                holychordsLink.classList.add('hidden');
+            }
+            
+            // Update song content
+            const songContent = document.getElementById('song-content');
+            songContent.innerHTML = formatSongContent(song.content);
+            
+            // Reset transpose selector
+            document.getElementById('transpose').value = '0';
+        }
+        
+        function showPlaylists() {
+            hideAllViews();
+            playlistsView.classList.remove('hidden');
+            currentView = 'playlists';
+            updateActiveNavLink();
+            
+            // Render playlists
+            renderPlaylists();
+        }
+        
+        function showPlaylist(playlist) {
+            hideAllViews();
+            playlistView.classList.remove('hidden');
+            currentView = 'playlist';
+            currentPlaylistId = playlist.id;
+            updateActiveNavLink();
+            
+            // Update playlist title
+            document.getElementById('playlist-title').textContent = playlist.name;
+            
+            // Render playlist songs
+            const playlistSongs = document.getElementById('playlist-songs');
+            playlistSongs.innerHTML = '';
+            
+            if (playlist.songs && playlist.songs.length > 0) {
+                playlist.songs.forEach(song => {
+                    const songData = allSongs.find(s => s.id === song.id);
+                    if (songData) {
+                        const songElement = document.createElement('div');
+                        songElement.className = 'flex justify-between items-center p-3 border-b border-gray-100 hover:bg-gray-50';
+                        songElement.innerHTML = `
+                            <div>
+                                <h4 class="font-medium text-gray-800">${songData.title}</h4>
+                                <p class="text-sm text-gray-500">${songData.artist || 'Unknown Artist'}</p>
+                                ${song.transpose ? `<span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Transposed: ${song.transpose > 0 ? '+' : ''}${song.transpose}</span>` : ''}
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="playSongFromPlaylist('${song.id}', ${song.transpose || 0})" class="text-blue-500 hover:text-blue-700">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button onclick="removeFromPlaylist('${song.id}')" class="text-red-500 hover:text-red-700">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                        playlistSongs.appendChild(songElement);
+                    }
+                });
+            } else {
+                playlistSongs.innerHTML = '<p class="text-gray-500 text-center py-8">No songs in this playlist yet.</p>';
+            }
+        }
+        
+        function showArtists() {
+            hideAllViews();
+            artistsView.classList.remove('hidden');
+            currentView = 'artists';
+            updateActiveNavLink();
+            
+            // Render all artists
+            renderArtists();
+        }
+        
+        function showArtist(artistName) {
+            hideAllViews();
+            artistView.classList.remove('hidden');
+            currentView = 'artist';
+            updateActiveNavLink();
+            
+            // Update artist name
+            document.getElementById('artist-name').textContent = artistName;
+            
+            // Render artist songs
+            const artistSongs = document.getElementById('artist-songs');
+            artistSongs.innerHTML = '';
+            
+            const songsByArtist = allSongs.filter(song => song.artist === artistName);
+            
+            if (songsByArtist.length > 0) {
+                songsByArtist.forEach(song => {
+                    const songElement = document.createElement('div');
+                    songElement.className = 'bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow';
+                    songElement.innerHTML = `
+                        <h3 class="font-medium text-gray-800 mb-1 truncate">${song.title}</h3>
+                        <p class="text-sm text-gray-500 mb-2">${song.key ? `Key: ${song.key}` : ''}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">${song.category}</span>
+                            <button onclick="showSong(${JSON.stringify(song).replace(/"/g, '&quot;')})" class="text-blue-500 hover:text-blue-700">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    `;
+                    artistSongs.appendChild(songElement);
+                });
+            } else {
+                artistSongs.innerHTML = '<p class="text-gray-500 text-center py-8">No songs found for this artist.</p>';
+            }
+        }
+        
+        function hideAllViews() {
+            homeView.classList.add('hidden');
+            songView.classList.add('hidden');
+            playlistsView.classList.add('hidden');
+            playlistView.classList.add('hidden');
+            artistsView.classList.add('hidden');
+            artistView.classList.add('hidden');
+        }
+        
+        function updateActiveNavLink() {
+            const navLinks = document.querySelectorAll('nav a');
+            navLinks.forEach(link => {
+                if ((currentView === 'home' && link.textContent.includes('Home')) || 
+                    (currentView === 'playlists' && link.textContent.includes('Playlists')) ||
+                    (currentView === 'artists' && link.textContent.includes('Artists'))) {
+                    link.classList.remove('border-transparent', 'text-gray-500', 'hover:border-gray-300', 'hover:text-gray-700');
+                    link.classList.add('border-blue-500', 'text-gray-900');
+                } else {
+                    link.classList.remove('border-blue-500', 'text-gray-900');
+                    link.classList.add('border-transparent', 'text-gray-500', 'hover:border-gray-300', 'hover:text-gray-700');
+                }
+            });
+        }
+        
+        // Sidebar functions
+        function toggleSidebar() {
+            if (sidebar.classList.contains('sidebar-hidden')) {
+                sidebar.classList.remove('sidebar-hidden');
+                sidebarOverlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('sidebar-hidden');
+                sidebarOverlay.classList.add('hidden');
+            }
+        }
+        
+        // Playlist modal functions
+        function showPlaylistModal() {
+            playlistModal.classList.remove('playlist-modal-hidden');
+            document.getElementById('playlist-name').focus();
+        }
+        
+        function hidePlaylistModal() {
+            playlistModal.classList.add('playlist-modal-hidden');
+            document.getElementById('playlist-name').value = '';
+            document.getElementById('playlist-description').value = '';
+        }
+        
+        function createPlaylist() {
+            const name = document.getElementById('playlist-name').value.trim();
+            const description = document.getElementById('playlist-description').value.trim();
+            
+            if (!name) {
+                alert('Please enter a playlist name');
+                return;
+            }
+            
+            const newPlaylist = {
+                name: name,
+                description: description,
+                songs: [],
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            // Save to Firestore
+            db.collection('playlists').add(newPlaylist)
+                .then(docRef => {
+                    hidePlaylistModal();
+                    loadPlaylists();
+                    
+                    // If there are songs in current playlist, add them to the new playlist
+                    if (currentPlaylist.length > 0) {
+                        const playlistRef = db.collection('playlists').doc(docRef.id);
+                        playlistRef.update({
+                            songs: currentPlaylist,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        }).then(() => {
+                            loadPlaylists();
+                            showPlaylist({ id: docRef.id, ...newPlaylist, songs: currentPlaylist });
+                            clearCurrentPlaylist();
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error creating playlist:', error);
+                    alert('Error creating playlist. Please try again.');
+                });
+        }
+        
+        // Current playlist functions
+        function toggleCurrentPlaylist() {
+            if (currentPlaylistPanel.classList.contains('hidden')) {
+                currentPlaylistPanel.classList.remove('hidden');
+                renderCurrentPlaylist();
+            } else {
+                currentPlaylistPanel.classList.add('hidden');
+            }
+        }
+        
+        function addToCurrentPlaylist() {
+            if (!currentSong) return;
+            
+            const transposeValue = parseInt(document.getElementById('transpose').value);
+            
+            // Check if song is already in playlist
+            const existingIndex = currentPlaylist.findIndex(item => item.id === currentSong.id);
+            
+            if (existingIndex >= 0) {
+                // Update transpose value if different
+                if (currentPlaylist[existingIndex].transpose !== transposeValue) {
+                    currentPlaylist[existingIndex].transpose = transposeValue;
+                }
+            } else {
+                // Add new song to playlist
+                currentPlaylist.push({
+                    id: currentSong.id,
+                    title: currentSong.title,
+                    artist: currentSong.artist,
+                    transpose: transposeValue !== 0 ? transposeValue : null
+                });
+            }
+            
+            // Update UI
+            updatePlaylistCount();
+            
+            // Show notification
+            showNotification('Song added to current playlist');
+        }
+        
+        function renderCurrentPlaylist() {
+            const playlistSongs = document.getElementById('current-playlist-songs');
+            playlistSongs.innerHTML = '';
+            
+            if (currentPlaylist.length > 0) {
+                currentPlaylist.forEach((song, index) => {
+                    const songElement = document.createElement('li');
+                    songElement.className = 'flex justify-between items-center p-2 hover:bg-gray-100 rounded';
+                    songElement.innerHTML = `
+                        <div class="flex-1 truncate">
+                            <span class="font-medium">${song.title}</span>
+                            ${song.transpose ? `<span class="text-xs bg-blue-100 text-blue-800 px-1 rounded ml-2">${song.transpose > 0 ? '+' : ''}${song.transpose}</span>` : ''}
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="playFromCurrentPlaylist(${index})" class="text-blue-500 hover:text-blue-700">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button onclick="removeFromCurrentPlaylist(${index})" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+                    playlistSongs.appendChild(songElement);
+                });
+            } else {
+                playlistSongs.innerHTML = '<li class="text-gray-500 text-center py-4">Your current playlist is empty</li>';
+            }
+        }
+        
+        function playFromCurrentPlaylist(index) {
+            if (index >= 0 && index < currentPlaylist.length) {
+                const song = allSongs.find(s => s.id === currentPlaylist[index].id);
+                if (song) {
+                    showSong(song);
+                    document.getElementById('transpose').value = currentPlaylist[index].transpose || '0';
+                    transposeSong();
+                }
+            }
+        }
+        
+        function removeFromCurrentPlaylist(index) {
+            if (index >= 0 && index < currentPlaylist.length) {
+                currentPlaylist.splice(index, 1);
+                updatePlaylistCount();
+                renderCurrentPlaylist();
+            }
+        }
+        
+        function clearCurrentPlaylist() {
+            currentPlaylist = [];
+            updatePlaylistCount();
+            renderCurrentPlaylist();
+        }
+        
+        function saveCurrentPlaylist() {
+            if (currentPlaylist.length === 0) {
+                alert('Your current playlist is empty');
+                return;
+            }
+            
+            if (currentPlaylistId) {
+                // Update existing playlist
+                const playlistRef = db.collection('playlists').doc(currentPlaylistId);
+                playlistRef.update({
+                    songs: currentPlaylist,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }).then(() => {
+                    showNotification('Playlist updated successfully');
+                    loadPlaylists();
+                }).catch(error => {
+                    console.error('Error updating playlist:', error);
+                    alert('Error updating playlist. Please try again.');
+                });
+            } else {
+                // Create new playlist
+                showPlaylistModal();
+            }
+        }
+        
+        function updatePlaylistCount() {
+            if (currentPlaylist.length > 0) {
+                playlistCount.textContent = currentPlaylist.length;
+                playlistCount.classList.remove('hidden');
+            } else {
+                playlistCount.classList.add('hidden');
+            }
+        }
+        
+        // Playlist functions
+        function loadPlaylists() {
+            db.collection('playlists').orderBy('updatedAt', 'desc').get()
+                .then(querySnapshot => {
+                    playlists = [];
+                    querySnapshot.forEach(doc => {
+                        playlists.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
+                    });
+                    
+                    // Update recent playlists in sidebar
+                    updateRecentPlaylists();
+                    
+                    // If we're on the playlists view, update it
+                    if (currentView === 'playlists') {
+                        renderPlaylists();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading playlists:', error);
+                });
+        }
+        
+        function updateRecentPlaylists() {
+            const recentPlaylists = document.getElementById('recent-playlists');
+            recentPlaylists.innerHTML = '';
+            
+            const recent = playlists.slice(0, 5); // Show 5 most recent
+            
+            if (recent.length > 0) {
+                recent.forEach(playlist => {
+                    const item = document.createElement('li');
+                    item.className = 'w-full';
+                    item.innerHTML = `
+                        <button onclick="showPlaylist(${JSON.stringify(playlist).replace(/"/g, '&quot;')})" class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 flex items-center truncate">
+                            <i class="fas fa-list-music text-blue-500 mr-2"></i>
+                            <span class="truncate">${playlist.name}</span>
+                        </button>
+                    `;
+                    recentPlaylists.appendChild(item);
+                });
+            } else {
+                recentPlaylists.innerHTML = '<li class="text-gray-500 px-3 py-2">No playlists yet</li>';
+            }
+        }
+        
+        function renderPlaylists() {
+            const playlistsContainer = document.getElementById('user-playlists');
+            playlistsContainer.innerHTML = '';
+            
+            if (playlists.length > 0) {
+                playlists.forEach(playlist => {
+                    const playlistElement = document.createElement('div');
+                    playlistElement.className = 'bg-white rounded-lg shadow overflow-hidden hover:shadow-md transition-shadow';
+                    playlistElement.innerHTML = `
+                        <div class="p-4">
+                            <h3 class="font-medium text-gray-800 mb-1 truncate">${playlist.name}</h3>
+                            ${playlist.description ? `<p class="text-sm text-gray-500 mb-2 truncate">${playlist.description}</p>` : ''}
+                            <p class="text-xs text-gray-400">${playlist.songs ? playlist.songs.length : 0} songs</p>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 flex justify-between items-center border-t border-gray-100">
+                            <span class="text-xs text-gray-500">Last updated: ${formatDate(playlist.updatedAt?.toDate())}</span>
+                            <button onclick="showPlaylist(${JSON.stringify(playlist).replace(/"/g, '&quot;')})" class="text-blue-500 hover:text-blue-700">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    `;
+                    playlistsContainer.appendChild(playlistElement);
+                });
+            } else {
+                playlistsContainer.innerHTML = '<p class="text-gray-500 text-center col-span-full py-8">You have no playlists yet. Create one to get started!</p>';
+            }
+        }
+        
+        function removeFromPlaylist(songId) {
+            if (!currentPlaylistId) return;
+            
+            const playlistRef = db.collection('playlists').doc(currentPlaylistId);
+            
+            db.runTransaction(transaction => {
+                return transaction.get(playlistRef).then(doc => {
+                    if (!doc.exists) {
+                        throw "Document does not exist!";
+                    }
+                    
+                    const playlist = doc.data();
+                    const updatedSongs = playlist.songs.filter(song => song.id !== songId);
+                    
+                    transaction.update(playlistRef, {
+                        songs: updatedSongs,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    return updatedSongs;
+                });
+            }).then(updatedSongs => {
+                showNotification('Song removed from playlist');
+                showPlaylist({ id: currentPlaylistId, ...playlist, songs: updatedSongs });
+            }).catch(error => {
+                console.error('Error removing song from playlist:', error);
+                alert('Error removing song from playlist. Please try again.');
+            });
+        }
+        
+        function playSongFromPlaylist(songId, transposeValue) {
+            const song = allSongs.find(s => s.id === songId);
+            if (song) {
+                showSong(song);
+                document.getElementById('transpose').value = transposeValue || '0';
+                transposeSong();
+            }
+        }
+        
+        // Song functions
+        function loadSongsFromGoogleSheets() {
+            // This is a simplified version - in a real app, you'd need to implement proper Google Sheets API calls
+            // For demo purposes, we'll use mock data
+            
+            // Mock data that would come from Google Sheets
+            const mockSongs = [
+                {
+                    id: '1',
+                    title: 'Amazing Grace',
+                    artist: 'John Newton',
+                    content: '[C]Amazing grace, how [G]sweet the sound\nThat [C]saved a wretch like [F]me\nI [C]once was lost, but [G]now am found\nWas [F]blind, but [C]now I [G]see',
+                    key: 'C',
+                    bpm: '80',
+                    category: 'Worship (Vertical)',
+                    youtube: 'https://www.youtube.com/watch?v=HsCp5LG_zNE',
+                    holychords: 'https://holychords.com/123'
+                },
+                {
+                    id: '2',
+                    title: 'How Great Thou Art',
+                    artist: 'Carl Boberg',
+                    content: '[C]O Lord my God, when [F]I in awesome wonder\nCon[C]sider all the [G7]worlds Thy [C]hands have made\nI [C]see the stars, I [F]hear the rolling thunder\nThy [C]power through-[G7]out the [C]universe displayed',
+                    key: 'C',
+                    bpm: '72',
+                    category: 'Worship (Horizontal)',
+                    youtube: 'https://www.youtube.com/watch?v=1OhSr6W+_9A',
+                    holychords: 'https://holychords.com/456'
+                },
+                {
+                    id: '3',
+                    title: '10,000 Reasons',
+                    artist: 'Matt Redman',
+                    content: '[G]Bless the Lord, O my [D]soul\nO my [Em]soul, worship His [C]holy name\n[G]Sing like never be[D]fore\nO my [Em]soul, I'll [C]worship Your [D]holy name',
+                    key: 'G',
+                    bpm: '68',
+                    category: 'Worship (Vertical)',
+                    youtube: 'https://www.youtube.com/watch?v=DXDGE_lRI0E',
+                    holychords: 'https://holychords.com/789'
+                },
+                {
+                    id: '4',
+                    title: 'Happy Day',
+                    artist: 'Tim Hughes',
+                    content: '[D]The greatest day in [A]history, [G]death is beaten\n[D]You have rescued [A]me, [G]sing it out\n[D]Jesus is alive, [A]the empty [G]cross, the empty [D]grave\n[A]Life eternal, [G]Jesus [D]King',
+                    key: 'D',
+                    bpm: '120',
+                    category: 'Fast (Vertical)',
+                    youtube: 'https://www.youtube.com/watch?v=JzXj0WNFg4k',
+                    holychords: 'https://holychords.com/101'
+                }
+            ];
+            
+            allSongs = mockSongs;
+            
+            // Extract unique artists
+            const artistSet = new Set();
+            mockSongs.forEach(song => {
+                if (song.artist) artistSet.add(song.artist);
+            });
+            artists = Array.from(artistSet).sort();
+            
+            // Render initial views
+            renderFeaturedSongs();
+            renderPopularArtists();
+            renderAllArtists();
+        }
+        
+        function renderFeaturedSongs() {
+            const featuredSongs = document.getElementById('featured-songs');
+            featuredSongs.innerHTML = '';
+            
+            // Get 6 random songs for featured
+            const shuffled = [...allSongs].sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, 6);
+            
+            selected.forEach(song => {
+                const songElement = document.createElement('div');
+                songElement.className = 'bg-white rounded-lg shadow overflow-hidden hover:shadow-md transition-shadow fade-in';
+                songElement.innerHTML = `
+                    <div class="aspect-w-1 aspect-h-1">
+                        <img src="https://via.placeholder.com/400x400" alt="${song.title}" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-medium text-gray-800 mb-1 truncate">${song.title}</h3>
+                        <p class="text-sm text-gray-500 mb-2 truncate">${song.artist || 'Unknown Artist'}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">${song.category}</span>
+                            <button onclick="showSong(${JSON.stringify(song).replace(/"/g, '&quot;')})" class="text-blue-500 hover:text-blue-700">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                featuredSongs.appendChild(songElement);
+            });
+        }
+        
+        function renderPopularArtists() {
+            const popularArtists = document.getElementById('popular-artists');
+            popularArtists.innerHTML = '';
+            
+            // Get first 6 artists for popular
+            const selected = artists.slice(0, 6);
+            
+            selected.forEach(artist => {
+                const artistElement = document.createElement('div');
+                artistElement.className = 'bg-white rounded-lg shadow p-4 flex flex-col items-center hover:shadow-md transition-transform hover:-translate-y-1 fade-in';
+                artistElement.innerHTML = `
+                    <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 text-2xl mb-2">
+                        ${artist.charAt(0).toUpperCase()}
+                    </div>
+                    <h3 class="text-sm font-medium text-gray-800 text-center truncate w-full">${artist}</h3>
+                    <button onclick="showArtist('${artist}')" class="text-xs text-blue-500 mt-1">View songs</button>
+                `;
+                popularArtists.appendChild(artistElement);
+            });
+        }
+        
+        function renderAllArtists() {
+            const allArtistsContainer = document.getElementById('all-artists');
+            allArtistsContainer.innerHTML = '';
+            
+            artists.forEach(artist => {
+                const artistElement = document.createElement('div');
+                artistElement.className = 'bg-white rounded-lg shadow p-4 flex flex-col items-center hover:shadow-md transition-transform hover:-translate-y-1 fade-in';
+                artistElement.innerHTML = `
+                    <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 text-2xl mb-2">
+                        ${artist.charAt(0).toUpperCase()}
+                    </div>
+                    <h3 class="text-sm font-medium text-gray-800 text-center truncate w-full">${artist}</h3>
+                    <button onclick="showArtist('${artist}')" class="text-xs text-blue-500 mt-1">View songs</button>
+                `;
+                allArtistsContainer.appendChild(artistElement);
+            });
+        }
+        
+        function renderArtists() {
+            // For this demo, we'll just call renderAllArtists
+            renderAllArtists();
+        }
+        
+        function searchSongs() {
+            const query = document.getElementById('search').value.toLowerCase();
+            
+            if (!query) {
+                if (currentView === 'home') renderFeaturedSongs();
+                return;
+            }
+            
+            const results = allSongs.filter(song => 
+                song.title.toLowerCase().includes(query) || 
+                (song.artist && song.artist.toLowerCase().includes(query))
+            );
+            
+            if (currentView === 'home') {
+                const featuredSongs = document.getElementById('featured-songs');
+                featuredSongs.innerHTML = '';
+                
+                if (results.length > 0) {
+                    results.forEach(song => {
+                        const songElement = document.createElement('div');
+                        songElement.className = 'bg-white rounded-lg shadow overflow-hidden hover:shadow-md transition-shadow fade-in';
+                        songElement.innerHTML = `
+                            <div class="aspect-w-1 aspect-h-1">
+                                <img src="https://via.placeholder.com/400x400" alt="${song.title}" class="object-cover w-full h-full">
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-medium text-gray-800 mb-1 truncate">${song.title}</h3>
+                                <p class="text-sm text-gray-500 mb-2 truncate">${song.artist || 'Unknown Artist'}</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">${song.category}</span>
+                                    <button onclick="showSong(${JSON.stringify(song).replace(/"/g, '&quot;')})" class="text-blue-500 hover:text-blue-700">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        featuredSongs.appendChild(songElement);
+                    });
+                } else {
+                    featuredSongs.innerHTML = '<p class="text-gray-500 text-center py-8 col-span-full">No songs found matching your search.</p>';
+                }
+            }
+        }
+        
+        function loadCategory(category) {
+            const songsInCategory = allSongs.filter(song => song.category === category);
+            
+            if (songsInCategory.length > 0) {
+                const featuredSongs = document.getElementById('featured-songs');
+                featuredSongs.innerHTML = '';
+                
+                songsInCategory.forEach(song => {
+                    const songElement = document.createElement('div');
+                    songElement.className = 'bg-white rounded-lg shadow overflow-hidden hover:shadow-md transition-shadow fade-in';
+                    songElement.innerHTML = `
+                        <div class="aspect-w-1 aspect-h-1">
+                            <img src="https://via.placeholder.com/400x400" alt="${song.title}" class="object-cover w-full h-full">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-medium text-gray-800 mb-1 truncate">${song.title}</h3>
+                            <p class="text-sm text-gray-500 mb-2 truncate">${song.artist || 'Unknown Artist'}</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">${song.category}</span>
+                                <button onclick="showSong(${JSON.stringify(song).replace(/"/g, '&quot;')})" class="text-blue-500 hover:text-blue-700">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    featuredSongs.appendChild(songElement);
+                });
+                
+                showHome();
+                toggleSidebar();
+            }
+        }
+        
+        // Song content formatting and transposition
+        function formatSongContent(content) {
+            if (!content) return '<p class="text-gray-500">No lyrics available</p>';
+            
+            // Split into lines
+            const lines = content.split('\n');
+            let html = '';
+            
+            lines.forEach(line => {
+                if (line.trim() === '') {
+                    html += '<div class="song-line">&nbsp;</div>';
+                    return;
+                }
+                
+                // Process chords and text
+                let processedLine = '';
+                let inChord = false;
+                let chord = '';
+                
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    
+                    if (char === '[') {
+                        inChord = true;
+                        chord = '';
+                    } else if (char === ']' && inChord) {
+                        inChord = false;
+                        processedLine += `<span class="chord">${chord}</span>`;
+                    } else if (inChord) {
+                        chord += char;
+                    } else {
+                        processedLine += char;
+                    }
+                }
+                
+                html += `<div class="song-line">${processedLine}</div>`;
+            });
+            
+            return html;
+        }
+        
+        function transposeSong() {
+            if (!currentSong) return;
+            
+            const transposeValue = parseInt(document.getElementById('transpose').value);
+            if (transposeValue === 0) {
+                // Reset to original
+                const songContent = document.getElementById('song-content');
+                songContent.innerHTML = formatSongContent(currentSong.content);
+                return;
+            }
+            
+            // Get all chord elements
+            const chordElements = document.querySelectorAll('#song-content .chord');
+            
+            // Chord mapping for transposition
+            const chordMap = {
+                'A': 0, 'A#': 1, 'Bb': 1, 'B': 2, 'C': 3, 'C#': 4, 'Db': 4, 'D': 5, 
+                'D#': 6, 'Eb': 6, 'E': 7, 'F': 8, 'F#': 9, 'Gb': 9, 'G': 10, 'G#': 11, 'Ab': 11
+            };
+            
+            const reverseChordMap = [
+                'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'
+            ];
+            
+            chordElements.forEach(chordElement => {
+                const originalChord = chordElement.textContent;
+                
+                // Match chord root and quality (e.g., 'C', 'Dm7', 'F#sus4')
+                const match = originalChord.match(/^([A-G][#b]?)(.*)/);
+                if (!match) return;
+                
+                const root = match[1];
+                const suffix = match[2];
+                
+                if (chordMap.hasOwnProperty(root)) {
+                    // Calculate new root
+                    let newIndex = (chordMap[root] + transposeValue) % 12;
+                    if (newIndex < 0) newIndex += 12;
+                    
+                    const newRoot = reverseChordMap[newIndex];
+                    const newChord = newRoot + suffix;
+                    
+                    // Highlight the transposed chord
+                    chordElement.textContent = newChord;
+                    chordElement.classList.add('transposed');
+                    
+                    // Remove highlight after animation
+                    setTimeout(() => {
+                        chordElement.classList.remove('transposed');
+                    }, 1000);
+                }
+            });
+        }
+        
+        // Utility functions
+        function formatDate(date) {
+            if (!date) return 'Unknown';
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+        
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center animate-fade-in-out';
+            notification.innerHTML = `
+                <i class="fas fa-check-circle mr-2"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
