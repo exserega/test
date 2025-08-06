@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agape Worship - Настройки</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../css/settings.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+</head>
+<body>
+    <div class="settings-container">
+        <!-- Header -->
+        <header class="settings-header">
+            <button class="back-button" onclick="history.back()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1>Настройки</h1>
+        </header>
+
+        <!-- User Info Section -->
+        <section class="user-info-section">
+            <div class="user-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="user-details">
+                <h2 id="user-name">Загрузка...</h2>
+                <p id="user-email" class="user-contact"></p>
+                <div class="user-badges">
+                    <span id="user-role" class="badge"></span>
+                    <span id="user-status" class="badge"></span>
+                    <span id="user-branch" class="badge"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Sections -->
+        <div class="settings-sections">
+            <!-- Profile Settings -->
+            <section class="settings-section">
+                <h3>Профиль</h3>
+                <div class="settings-list">
+                    <div class="settings-item">
+                        <div class="setting-info">
+                            <span class="setting-label">Имя</span>
+                            <span id="display-name" class="setting-value">-</span>
+                        </div>
+                        <button class="edit-button" onclick="editName()">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Branch Info -->
+            <section class="settings-section" id="branch-section">
+                <h3>Филиалы</h3>
+                <div class="settings-list">
+                    <div class="settings-item">
+                        <div class="setting-info">
+                            <span class="setting-label">Основной филиал</span>
+                            <span id="current-branch" class="setting-value">Не назначен</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Дополнительные филиалы -->
+                    <div class="settings-item" id="additional-branches-section" style="display: none;">
+                        <div class="setting-info">
+                            <span class="setting-label">Дополнительные филиалы</span>
+                            <div id="additional-branches-list" class="additional-branches-list"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Активные запросы -->
+                    <div id="branch-requests-section" class="branch-requests-section" style="display: none;">
+                        <h4>Активные запросы</h4>
+                        <div id="branch-requests-list"></div>
+                    </div>
+                    
+                    <div class="branch-actions">
+                        <button id="change-main-branch-btn" class="action-button" onclick="showChangeBranchModal()">
+                            <i class="fas fa-exchange-alt"></i>
+                            Сменить основной филиал
+                        </button>
+                        <button id="request-additional-branch-btn" class="action-button secondary" onclick="showAddBranchModal()">
+                            <i class="fas fa-plus"></i>
+                            Присоединиться к филиалу
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Admin Section (скрыто по умолчанию) -->
+            <section class="settings-section admin-only" id="admin-section" style="display: none;">
+                <h3>Администрирование</h3>
+                <div class="settings-list">
+                    <a href="/public/admin.html" class="settings-link">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Панель администратора</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Actions -->
+            <section class="settings-section">
+                <button class="logout-button" onclick="handleLogout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Выйти из аккаунта
+                </button>
+            </section>
+        </div>
+    </div>
+
+    <!-- Firebase Config -->
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBlkjVQFtFpMRFexAi6nBqEkIfjFlU5cDo",
+            authDomain: "song-archive-389a6.firebaseapp.com",
+            projectId: "song-archive-389a6",
+            storageBucket: "song-archive-389a6.appspot.com",
+            messagingSenderId: "660585697058",
+            appId: "1:660585697058:web:7ceacf752ce6b21ad8fb40",
+            measurementId: "G-Z6QYH5YD2E"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        
+        // Устанавливаем persistence для сохранения сессии между страницами
+        firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+            .then(() => {
+                console.log('✅ Firebase persistence set to LOCAL');
+            })
+            .catch((error) => {
+                console.error('Error setting persistence:', error);
+            });
+        
+        // Включаем отладку Firestore
+        firebase.firestore().settings({
+            experimentalForceLongPolling: true, // Для обхода проблем с сетью
+            merge: true
+        });
+        
+        // Проверка подключения
+        firebase.firestore().enableNetwork()
+            .then(() => console.log('✅ Firestore network enabled'))
+            .catch(err => console.error('❌ Firestore network error:', err));
+    </script>
+    
+    <!-- Модальные окна -->
+    <!-- Модальное окно смены основного филиала -->
+    <div id="change-branch-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Сменить основной филиал</h3>
+                <button class="close-modal" onclick="closeModal('change-branch-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="new-main-branch">Выберите новый основной филиал</label>
+                    <select id="new-main-branch" class="form-control form-control-large">
+                        <option value="">Загрузка...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('change-branch-modal')">Отмена</button>
+                <button class="btn btn-primary" onclick="submitMainBranchChange()">Отправить запрос</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно присоединения к филиалу -->
+    <div id="add-branch-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Присоединиться к филиалу</h3>
+                <button class="close-modal" onclick="closeModal('add-branch-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="additional-branch">Выберите филиал</label>
+                    <select id="additional-branch" class="form-control form-control-large">
+                        <option value="">Загрузка...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('add-branch-modal')">Отмена</button>
+                <button class="btn btn-primary" onclick="submitAdditionalBranchRequest()">Отправить запрос</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Settings Module -->
+    <script src="../src/modules/settings/settings.js"></script>
+</body>
+</html>

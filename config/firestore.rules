@@ -1,0 +1,120 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.role == 'admin';
+    }
+    
+    function isModerator() {
+      return isAuthenticated() && 
+        (request.auth.token.role == 'moderator' || request.auth.token.role == 'admin');
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function hasActiveStatus() {
+      return isAuthenticated() && request.auth.token.status == 'active';
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      // Anyone can read their own profile
+      allow read: if isOwner(userId);
+      
+      // Admins can read all profiles
+      allow read: if isAdmin();
+      
+      // Users can update their own profile (except role and status)
+      allow update: if isOwner(userId) && 
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'status', 'permissions', 'isFounder']);
+      
+      // Only admins can create or delete users
+      allow create, delete: if isAdmin();
+      
+      // Admins can update any field EXCEPT isFounder flag for founders
+      allow update: if isAdmin() && 
+        (
+          // Если пользователь не основатель - можно обновлять всё
+          !resource.data.isFounder ||
+          // Если основатель - нельзя менять роль с admin и флаг isFounder
+          (
+            request.resource.data.role == 'admin' &&
+            request.resource.data.isFounder == true
+          )
+        );
+    }
+    
+    // Invites collection
+    match /invites/{inviteId} {
+      // Only admins can read and create invites
+      allow read, create: if isAdmin();
+      
+      // Anyone can read their own invite by email
+      allow read: if isAuthenticated() && 
+        resource.data.email == request.auth.token.email;
+      
+      // Invited users can update invite status
+      allow update: if isAuthenticated() && 
+        resource.data.email == request.auth.token.email &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'acceptedBy', 'acceptedAt']);
+      
+      // Admins can delete invites
+      allow delete: if isAdmin();
+    }
+    
+    // Songs collection (existing rules)
+    match /songs/{songId} {
+      // Everyone can read songs
+      allow read: if true;
+      
+      // Active users can create songs
+      allow create: if hasActiveStatus();
+      
+      // Users can update their own songs or moderators can update any
+      allow update: if (isOwner(resource.data.createdBy) || isModerator());
+      
+      // Only admins can delete songs
+      allow delete: if isAdmin();
+    }
+    
+    // Setlists collection
+    match /setlists/{setlistId} {
+      // Everyone can read setlists
+      allow read: if true;
+      
+      // Active users can create setlists
+      allow create: if hasActiveStatus();
+      
+      // Users can update their own setlists or moderators can update any
+      allow update: if (isOwner(resource.data.createdBy) || isModerator());
+      
+      // Only admins can delete setlists
+      allow delete: if isAdmin();
+    }
+    
+    // Branches collection
+    match /branches/{branchId} {
+      // All authenticated users can read branches
+      allow read: if isAuthenticated();
+      
+      // Only admins can manage branches
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // System metadata (for first admin setup)
+    match /system/{document} {
+      // Anyone can read system status
+      allow read: if true;
+      
+      // Only cloud functions can write
+      allow write: if false;
+    }
+  }
+}

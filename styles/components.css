@@ -1,0 +1,492 @@
+/* ======================================== */
+/* Additional Components - Agape Worship v2.3 */
+/* ======================================== */
+
+/* Стили для маркеров структуры песни (Куплет, Припев и т.д.) */
+.song-structure {
+    display: block; /* Занимает всю строку */
+    font-weight: bold; /* Жирный шрифт */
+    color: var(--secondary-color); /* Или var(--primary-color) */
+    margin-top: 0.8em; /* Отступ сверху перед маркером */
+    margin-bottom: 0.3em; /* Небольшой отступ снизу после маркера */
+    text-transform: uppercase; /* Можно сделать большими буквами */
+    letter-spacing: 0.5px; /* Небольшое разрежение букв */
+    font-size: 0.9em; /* Чуть меньше основного текста, если нужно */
+}
+/* Убираем лишний отступ у самого первого маркера в тексте */
+pre > .song-structure:first-child {
+    margin-top: 0;
+}
+
+/* В режиме презентации можно сделать их чуть заметнее */
+.presentation-song .song-structure {
+     color: var(--primary-color); /* Другой цвет в презентации */
+     font-size: 0.85em;
+     margin-top: 1em;
+     margin-bottom: 0.4em;
+}
+body[data-theme="light"] .presentation-song .song-structure {
+     color: var(--secondary-color); /* Цвет для светлой темы в презентации */
+}
+
+/* === СТИЛИ ДЛЯ БЛОКОВ ПЕСНИ === */
+/* ПОЛНЫЙ СБРОС всех браузерных стилей для fieldset */
+.song-block {
+    /* СБРОС браузерных стилей fieldset */
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    margin: 2px 0 !important; /* Минимальный отступ между блоками */
+    padding: 0 !important; /* ПОЛНОСТЬЮ убираем padding у fieldset */
+    background-color: var(--container-background-color);
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    
+    /* Убираем все браузерные отступы */
+    min-width: 0;
+    max-width: 100%; /* Строго ограничиваем ширину */
+    box-sizing: border-box;
+    
+    /* Принудительный перенос текста */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow: hidden; /* Запрещаем выход за пределы */
+}
+
+.song-block:first-child {
+    margin-top: 0 !important;
+}
+
+.song-block:last-child {
+    margin-bottom: 0 !important;
+}
+
+/* КАРДИНАЛЬНО ПЕРЕРАБОТАННЫЕ стили для legend */
+.song-block-legend {
+    color: var(--primary-color);
+    font-weight: 700; /* Увеличили жирность с 600 до 700 для лучшего выделения */
+    font-size: calc(var(--lyrics-font-size, 1rem) * 1.0); /* Такой же размер как основной текст */
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+    transition: color 0.3s ease, background-color 0.3s ease;
+    
+    /* ДОБАВЛЯЕМ ФОН КАК У АККОРДОВ */
+    background-color: color-mix(in srgb, var(--accent-color) 2%, transparent);
+    border-radius: 3px;
+    
+    /* МАКСИМАЛЬНО КОМПАКТНЫЕ отступы */
+    padding: 4px 8px !important; /* Увеличили вертикальный padding еще больше для лучшего центрирования */
+    margin: 0 0 -16px 12px !important; /* Увеличили отрицательный margin с -10px до -16px для максимальной компактности */
+    border: none !important;
+    line-height: 1.3 !important; /* Увеличили line-height для еще лучшего вертикального выравнивания */
+    
+    /* Защита от переполнения */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 24px);
+    
+    /* Позиционирование и центрирование */
+    float: none !important;
+    width: auto !important;
+    display: inline-flex !important; /* Изменили на inline-flex для лучшего центрирования */
+    align-items: center !important; /* ЦЕНТРИРУЕМ текст по вертикали внутри фона */
+}
+
+.song-block-content {
+    margin: -14px 0 0 0 !important; /* Увеличили отрицательный margin с -8px до -14px для максимальной компактности */
+    padding: 0px 6px 1px 6px !important; /* Сократили нижний padding еще в 2 раза: с 2px до 1px */
+    white-space: pre-wrap; /* Изменяем с pre на pre-wrap для переноса */
+    line-height: inherit;
+    box-sizing: border-box;
+    max-width: 100%; /* Строго ограничиваем ширину */
+    
+    /* Принудительный перенос текста */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow: hidden; /* Запрещаем выход за пределы */
+}
+
+/* Светлая тема для блоков */
+body[data-theme="light"] .song-block {
+    border-color: var(--border-color);
+    background-color: var(--container-background-color);
+}
+
+body[data-theme="light"] .song-block-legend {
+    color: var(--secondary-color);
+    background-color: color-mix(in srgb, var(--accent-color) 5%, transparent); /* Более заметный фон в светлой теме как у аккордов */
+}
+
+/* === ИНТЕЛЛЕКТУАЛЬНЫЙ ПАРСЕР: СТИЛИ УВЕРЕННОСТИ === */
+
+/* Высокая уверенность распознавания (80%+) */
+.song-block.high-confidence {
+    border-color: color-mix(in srgb, var(--accent-color) 60%, transparent);
+}
+
+.song-block.high-confidence .song-block-legend {
+    border-color: color-mix(in srgb, var(--accent-color) 80%, transparent);
+    background: color-mix(in srgb, var(--accent-color) 8%, transparent);
+}
+
+body[data-theme="light"] .song-block.high-confidence .song-block-legend {
+    background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+    border-color: color-mix(in srgb, var(--accent-color) 40%, transparent);
+}
+
+/* Средняя уверенность распознавания (50-80%) */
+.song-block.medium-confidence {
+    border-color: color-mix(in srgb, #fbbf24 40%, transparent);
+}
+
+.song-block.medium-confidence .song-block-legend {
+    border-color: color-mix(in srgb, #fbbf24 60%, transparent);
+    background: color-mix(in srgb, #fbbf24 5%, transparent);
+}
+
+body[data-theme="light"] .song-block.medium-confidence .song-block-legend {
+    background: color-mix(in srgb, #fbbf24 8%, transparent);
+    border-color: color-mix(in srgb, #fbbf24 30%, transparent);
+}
+
+/* Низкая уверенность распознавания (<50%) */
+.song-block.low-confidence {
+    border-color: color-mix(in srgb, var(--danger-color) 30%, transparent);
+}
+
+.song-block.low-confidence .song-block-legend {
+    border-color: color-mix(in srgb, var(--danger-color) 50%, transparent);
+    background: color-mix(in srgb, var(--danger-color) 3%, transparent);
+}
+
+body[data-theme="light"] .song-block.low-confidence .song-block-legend {
+    background: color-mix(in srgb, var(--danger-color) 5%, transparent);
+    border-color: color-mix(in srgb, var(--danger-color) 25%, transparent);
+}
+
+/* Анимация для новых блоков */
+.song-block[data-method="learned"] {
+    animation: learnedBlock 0.5s ease-out;
+}
+
+@keyframes learnedBlock {
+    0% {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 15px color-mix(in srgb, var(--accent-color) 30%, transparent);
+    }
+    100% {
+        border-color: color-mix(in srgb, var(--accent-color) 60%, transparent);
+        box-shadow: none;
+    }
+}
+
+/* Дополнительные визуальные подсказки */
+.song-block[data-type="verse"] .song-block-legend::before {
+    content: "📝 ";
+    opacity: 0.7;
+}
+
+.song-block[data-type="chorus"] .song-block-legend::before {
+    content: "🎵 ";
+    opacity: 0.7;
+}
+
+.song-block[data-type="bridge"] .song-block-legend::before {
+    content: "🌉 ";
+    opacity: 0.7;
+}
+
+.song-block[data-type="intro"] .song-block-legend::before {
+    content: "🎬 ";
+    opacity: 0.7;
+}
+
+.song-block[data-type="outro"] .song-block-legend::before {
+    content: "🎭 ";
+    opacity: 0.7;
+}
+
+.song-block[data-type="solo"] .song-block-legend::before {
+    content: "🎸 ";
+    opacity: 0.7;
+}
+
+.song-block[data-type="pre"] .song-block-legend::before {
+    content: "🔀 ";
+    opacity: 0.7;
+}
+
+/* Подсказка при наведении на блок */
+.song-block[data-confidence][data-method] .song-block-legend:hover::after {
+    content: "Уверенность: " attr(data-confidence) "% (" attr(data-method) ")";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-tooltip-bg);
+    color: var(--color-tooltip-text);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+body[data-theme="light"] .song-block[data-confidence][data-method] .song-block-legend:hover::after {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+/* === ВАРИАНТ 4: Минималистичный (Ghost Buttons) === */
+/* Добавить/Изменить в styles.css */
+
+.repertoire-view-controls {
+    display: flex;
+    justify-content: flex-start; /* Кнопки не растягиваются */
+    gap: 8px; /* Зазор между кнопками */
+    margin-bottom: 15px;
+    /* Убираем стили контейнера группы */
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+    padding: 0;
+    background-color: transparent;
+}
+
+.repertoire-view-button {
+    flex-grow: 0; /* Не растягивать */
+    padding: 6px 12px; /* Побольше горизонтальные отступы */
+    font-size: 0.8rem;
+    text-align: center;
+    background-color: transparent;
+    color: var(--label-color);
+    border: 1px solid var(--border-color); /* Рамка у неактивных */
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    border-radius: var(--radius); /* Обычное скругление */
+    box-shadow: none !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    line-height: 1.2;
+}
+
+.repertoire-view-button:hover:not(.active) {
+    border-color: var(--text-color); /* Рамка темнее при наведении */
+    color: var(--text-color);
+}
+
+/* Стиль АКТИВНОЙ кнопки */
+.repertoire-view-button.active {
+    background-color: var(--primary-color);
+    color: var(--button-text-color) !important;
+    border-color: var(--primary-color); /* Рамка в цвет фона */
+    font-weight: 500;
+}
+
+/* Стили для светлой темы */
+body[data-theme="light"] .repertoire-view-button {
+     color: var(--label-color);
+     border-color: var(--border-color);
+}
+body[data-theme="light"] .repertoire-view-button:hover:not(.active) {
+     border-color: var(--text-color);
+     color: var(--text-color);
+}
+body[data-theme="light"] .repertoire-view-button.active {
+     background-color: var(--primary-color);
+     color: var(--button-text-color) !important;
+     border-color: var(--primary-color);
+}
+
+/* ============================================ */
+/* КНОПКИ ДЕЙСТВИЙ С LEGEND-ГРАНИЦАМИ         */
+/* ============================================ */
+
+/* Song Actions Legend Row (компактные кнопки с границами как fieldset) */
+.song-actions-legend-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* Уменьшили с 25px */
+    margin: 12px 0 16px 0; /* Уменьшили отступы */
+}
+
+.song-legend-action {
+    position: relative;
+    display: inline-block;
+}
+
+/* Сама кнопка - компактная */
+.legend-icon-btn {
+    width: 68px; /* Увеличили для текста "Репертуар" */
+    height: 40px; /* Уменьшили с 50px */
+    border: 1.5px solid var(--border-color);
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px; /* Уменьшили с 8px */
+    font-size: 1.1rem; /* Уменьшили с 1.3rem */
+    transition: all 0.2s ease;
+    cursor: pointer;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    margin-top: 8px; /* Уменьшили с 12px */
+    /* Цвет определяется для каждой кнопки индивидуально ниже */
+}
+
+/* Единый цвет для всех кнопок в зависимости от темы */
+.legend-icon-btn.heart,
+.legend-icon-btn.setlist,
+.legend-icon-btn.mic {
+    color: #e5e7eb !important; /* Светлые иконки для темной темы */
+}
+
+/* Темные иконки для светлой темы */
+body[data-theme="light"] .legend-icon-btn.heart,
+body[data-theme="light"] .legend-icon-btn.setlist,
+body[data-theme="light"] .legend-icon-btn.mic {
+    color: #1e293b !important; /* Темные иконки для светлой темы */
+}
+
+/* Fallback цвет для кнопок без специфичного класса */
+.legend-icon-btn:not(.heart):not(.setlist):not(.mic) {
+    color: #e5e7eb; /* Светлые иконки для темной темы */
+}
+
+body[data-theme="light"] .legend-icon-btn:not(.heart):not(.setlist):not(.mic) {
+    color: #1e293b !important;
+}
+
+/* Правила для иконок в светлой теме */
+body[data-theme="light"] .legend-icon-btn.heart i,
+body[data-theme="light"] .legend-icon-btn.setlist i,
+body[data-theme="light"] .legend-icon-btn.mic i {
+    color: #1e293b !important; /* Темные иконки для светлой темы */
+}
+
+/* Legend как часть границы - фон контейнера для закрытия границы */
+.song-legend-action::before {
+    content: attr(data-legend);
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--container-background-color); /* Фон как у основного контейнера */
+    color: var(--label-color);
+    font-size: 0.45rem; /* Еще больше уменьшили с 0.55rem */
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.2px; /* Уменьшили с 0.3px */
+    padding: 1px 6px; /* Увеличили боковые отступы для лучшего закрытия границы */
+    white-space: nowrap;
+    z-index: 1;
+    transition: color 0.2s ease;
+    max-width: 64px; /* Увеличили для текста "Репертуар" */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.legend-icon-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--hover-color);
+    transform: translateY(-1px); /* Уменьшили с -2px */
+    box-shadow: 0 2px 8px var(--shadow-color); /* Уменьшили с 0 4px 12px */
+}
+
+.legend-icon-btn:hover + .song-legend-action::before,
+.song-legend-action:hover::before {
+    color: var(--primary-color);
+}
+
+.legend-icon-btn:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 20%, transparent);
+}
+
+.legend-icon-btn:active {
+    transform: translateY(0);
+    background: var(--primary-color);
+    color: var(--color-text-inverse);
+}
+
+.legend-icon-btn i {
+    pointer-events: none;
+    color: inherit !important; /* Наследуем цвет от родительской кнопки */
+}
+
+/* Дополнительные правила для обеспечения правильных цветов */
+.legend-icon-btn.heart i,
+.legend-icon-btn.setlist i,
+.legend-icon-btn.mic i {
+    color: #e5e7eb !important; /* Светлые иконки для темной темы */
+}
+
+
+
+/* Цветовые состояния для активных кнопок */
+.legend-icon-btn.heart.active,
+.legend-icon-btn.setlist.active,
+.legend-icon-btn.mic.active {
+    color: var(--primary-color) !important; /* Цвет акцента для активного состояния */
+    border-color: var(--primary-color);
+    background: color-mix(in srgb, var(--primary-color) 10%, transparent);
+}
+
+/* Активные состояния для иконок */
+.legend-icon-btn.heart.active i,
+.legend-icon-btn.setlist.active i,
+.legend-icon-btn.mic.active i {
+    color: var(--primary-color) !important; /* Цвет акцента для активных иконок */
+}
+
+/* Активные состояния для legend */
+.song-legend-action.heart.active::before,
+.song-legend-action.setlist.active::before,
+.song-legend-action.mic.active::before {
+    color: var(--primary-color); /* Цвет акцента для активных подписей */
+}
+
+@media (max-width: 768px) {
+    .song-actions-legend-row {
+        gap: 15px;
+        margin: 10px 0 14px 0;
+    }
+    
+    .legend-icon-btn {
+        width: 63px; /* Увеличили для текста "Репертуар" */
+        height: 36px;
+        font-size: 1rem;
+        margin-top: 7px;
+    }
+    
+    .song-legend-action::before {
+        font-size: 0.5rem;
+        padding: 1px 3px;
+        max-width: 58px; /* Увеличили для текста "Репертуар" */
+    }
+}
+
+@media (max-width: 480px) {
+    .song-actions-legend-row {
+        gap: 12px;
+        margin: 8px 0 12px 0;
+    }
+    
+    .legend-icon-btn {
+        width: 58px; /* Увеличили для текста "Репертуар" */
+        height: 32px;
+        font-size: 0.9rem;
+        margin-top: 6px;
+    }
+    
+    .song-legend-action::before {
+        font-size: 0.45rem;
+        padding: 1px 2px;
+        max-width: 52px; /* Увеличили для текста "Репертуар" */
+    }
+}

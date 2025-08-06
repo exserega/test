@@ -1,0 +1,235 @@
+/* =====================================================================
+   Agape Worship App - SetList Panel Styles (Part 4)
+   ===================================================================== */
+
+/* === ВЫБОР ТОНАЛЬНОСТИ === */
+
+.key-selection-content {
+    max-width: 600px;
+}
+
+.key-section {
+    padding: 0;
+}
+
+.current-key-info {
+    margin-bottom: 28px;
+    padding: 16px 20px;
+    background: color-mix(in srgb, var(--container-background-color) 50%, var(--background-color));
+    border-radius: 12px;
+    border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
+}
+
+.key-info-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.key-info-item:last-child {
+    margin-bottom: 0;
+}
+
+.key-info-item label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    opacity: 0.9;
+}
+
+.key-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-align: center;
+    box-shadow: 0 2px 4px color-mix(in srgb, var(--border-color) 30%, transparent);
+}
+
+.key-badge.original {
+    background: linear-gradient(135deg, 
+        color-mix(in srgb, var(--secondary-color) 15%, var(--container-background-color)),
+        color-mix(in srgb, var(--secondary-color) 25%, var(--container-background-color))
+    );
+    color: var(--secondary-color);
+    border: 1px solid color-mix(in srgb, var(--secondary-color) 40%, var(--border-color));
+}
+
+.key-badge.selected {
+    background: linear-gradient(135deg, 
+        color-mix(in srgb, var(--primary-color) 15%, var(--container-background-color)),
+        color-mix(in srgb, var(--primary-color) 25%, var(--container-background-color))
+    );
+    color: var(--primary-color);
+    border: 1px solid color-mix(in srgb, var(--primary-color) 40%, var(--border-color));
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--primary-color) 20%, transparent);
+}
+
+.keys-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 4px;
+}
+
+.key-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    background: var(--background-color);
+    border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--border-color) 20%, transparent);
+}
+
+/* Цвета для кнопок тональностей - ИСПРАВЛЕНО */
+.key-btn {
+    /* Темная тема по умолчанию - светлый текст */
+    color: #f1f5f9 !important;
+}
+
+/* Светлая тема - темный текст */
+body[data-theme="light"] .key-btn {
+    color: #0f172a !important;
+}
+
+/* Дополнительные селекторы для гарантии */
+.keys-grid .key-btn {
+    color: #f1f5f9 !important; /* Темная тема */
+}
+
+body[data-theme="light"] .keys-grid .key-btn {
+    color: #0f172a !important; /* Светлая тема */
+}
+
+.key-selection-content .key-btn {
+    color: #f1f5f9 !important; /* Темная тема */
+}
+
+body[data-theme="light"] .key-selection-content .key-btn {
+    color: #0f172a !important; /* Светлая тема */
+}
+
+.key-btn:hover {
+    border-color: color-mix(in srgb, var(--primary-color) 70%, var(--border-color));
+    background: color-mix(in srgb, var(--primary-color) 8%, var(--background-color));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--primary-color) 15%, transparent);
+}
+
+.key-btn.selected {
+    background: linear-gradient(135deg, var(--primary-color), color-mix(in srgb, var(--primary-color) 85%, black));
+    border-color: var(--primary-color);
+    color: white !important;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--primary-color) 40%, transparent);
+    transform: translateY(-1px);
+}
+
+.key-btn.selected:hover {
+    background: linear-gradient(135deg, 
+        color-mix(in srgb, var(--primary-color) 90%, white), 
+        color-mix(in srgb, var(--primary-color) 75%, black)
+    );
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--primary-color) 50%, transparent);
+}
+
+/* Блок "Выбранная тональность" удален как избыточный */
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.close-modal-btn {
+    background: none;
+    border: none;
+    color: var(--label-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.close-modal-btn:hover {
+    background: var(--hover-color);
+    color: var(--text-color);
+}
+
+/* === ДОПОЛНИТЕЛЬНЫЕ МОДАЛЬНЫЕ СТИЛИ === */
+
+.btn-modern {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 44px;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--border-color) 20%, transparent);
+}
+
+.btn-modern.primary {
+    background: linear-gradient(135deg, var(--primary-color), color-mix(in srgb, var(--primary-color) 85%, black));
+    color: white;
+}
+
+.btn-modern.primary:hover {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--primary-color) 95%, white), var(--primary-color));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--primary-color) 30%, transparent);
+}
+
+.btn-modern.secondary {
+    background: var(--container-background-color);
+    color: var(--text-color);
+    border: 2px solid var(--border-color);
+}
+
+.btn-modern.secondary:hover {
+    background: color-mix(in srgb, var(--hover-color) 85%, var(--primary-color));
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+/* === КРИТИЧЕСКИ ВАЖНЫЕ СТИЛИ ТОНАЛЬНОСТЕЙ === */
+/* Максимальная специфичность для гарантии применения */
+#key-selection-modal .key-btn,
+.global-overlay .key-btn,
+button.key-btn {
+    color: #f1f5f9 !important; /* Светлый текст для темной темы */
+}
+
+body[data-theme="light"] #key-selection-modal .key-btn,
+body[data-theme="light"] .global-overlay .key-btn,
+body[data-theme="light"] button.key-btn {
+    color: #0f172a !important; /* Темный текст для светлой темы */
+}

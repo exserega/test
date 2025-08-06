@@ -1,0 +1,444 @@
+/* =====================================================================
+   Agape Worship App - Add Songs Overlay Compact Mobile Overrides
+   ===================================================================== */
+
+/* Компактные стили для мобильных устройств с высокой специфичностью */
+
+/* === ОБЩИЕ ПЕРЕОПРЕДЕЛЕНИЯ === */
+
+/* Заголовок overlay - компактный */
+#add-songs-overlay .fullscreen-header {
+    padding: 8px 10px !important;
+    gap: 4px !important;
+}
+
+#add-songs-overlay .header-top-row {
+    gap: 8px !important;
+}
+
+#add-songs-overlay .header-left {
+    gap: 8px !important;
+}
+
+#add-songs-overlay .header-title h3 {
+    font-size: 0.95rem !important;
+    margin: 0 !important;
+    font-weight: 600 !important;
+}
+
+/* Кнопка закрытия - компактная */
+#add-songs-overlay .overlay-close-btn {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.9rem !important;
+    background: transparent !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-color) !important;
+    border-radius: 6px !important;
+}
+
+/* Счетчик добавленных - скрываем в заголовке */
+#add-songs-overlay .added-counter {
+    display: none !important;
+}
+
+/* Бейдж счетчика в кнопке фильтра */
+#add-songs-overlay .added-count-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 18px !important;
+    height: 18px !important;
+    padding: 0 4px !important;
+    margin-left: 4px !important;
+    background: var(--primary-color) !important;
+    color: var(--color-button-text) !important;
+    border-radius: 9px !important;
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+}
+
+/* Кнопка "Готово" - в стиле панели */
+#add-songs-overlay .btn-modern.primary {
+    padding: 6px 10px !important;
+    min-height: 32px !important;
+    font-size: 0.8rem !important;
+    background: var(--primary-color) !important;
+    color: var(--color-button-text) !important;
+    border: none !important;
+    border-radius: 6px !important;
+    gap: 4px !important;
+}
+
+#add-songs-overlay .btn-modern.primary i {
+    font-size: 0.75rem !important;
+}
+
+/* Подзаголовок с названием сет-листа */
+#add-songs-overlay .header-subtitle {
+    font-size: 0.75rem !important;
+    color: var(--label-color) !important;
+    padding: 0 !important;
+}
+
+#add-songs-overlay .setlist-name {
+    color: var(--primary-color) !important;
+    font-weight: 600 !important;
+}
+
+/* === СЕКЦИЯ ПОИСКА - КОМПАКТНАЯ === */
+
+#add-songs-overlay .search-section {
+    padding: 10px 12px !important;
+    background: var(--background-color) !important;
+}
+
+#add-songs-overlay .search-container {
+    max-width: 100% !important;
+}
+
+#add-songs-overlay .search-input-wrapper {
+    margin-bottom: 8px !important;
+}
+
+/* Поле поиска - компактное */
+#add-songs-overlay .search-input {
+    padding: 8px 36px 8px 12px !important;
+    font-size: 0.875rem !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 6px !important;
+    min-height: 36px !important;
+}
+
+#add-songs-overlay .search-input-wrapper i.fa-search {
+    right: 12px !important;
+    font-size: 0.8rem !important;
+}
+
+#add-songs-overlay .clear-search-btn {
+    right: 40px !important;
+    width: 24px !important;
+    height: 24px !important;
+}
+
+/* === ФИЛЬТРЫ - КОМПАКТНЫЕ === */
+
+#add-songs-overlay .search-filters {
+    gap: 6px !important;
+    display: flex !important;
+    flex-wrap: nowrap !important; /* Не переносить на новую строку */
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Специальное правило для экранов < 480px */
+@media (max-width: 480px) {
+    #add-songs-overlay .search-filters {
+        flex-wrap: nowrap !important; /* ВАЖНО: не давать элементам переноситься */
+        flex-direction: row !important; /* Всегда в строку */
+        align-items: stretch !important; /* Одинаковая высота */
+    }
+}
+
+#add-songs-overlay .filter-select,
+#add-songs-overlay .filter-btn {
+    height: 34px !important;
+    padding: 0 8px !important; /* Еще меньше отступы */
+    font-size: 0.8rem !important;
+    border-radius: 6px !important;
+    min-width: 0 !important;
+}
+
+/* Селект категорий - фиксированная ширина */
+#add-songs-overlay .filter-select {
+    flex: 0 0 45% !important; /* Занимает 45% ширины */
+    background: var(--background-color) !important;
+    min-width: 120px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    min-height: 34px !important; /* Минимальная высота */
+}
+
+/* Кнопка фильтра */
+#add-songs-overlay .filter-btn {
+    gap: 4px !important;
+    white-space: nowrap !important;
+    flex: 1 !important; /* Занимает оставшееся место */
+    position: relative !important;
+    min-height: 34px !important; /* Минимальная высота */
+}
+
+/* Иконка убрана из кнопки фильтра */
+
+#add-songs-overlay .filter-btn.active {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+#add-songs-overlay .filter-btn.active span {
+    color: var(--color-button-text) !important;
+}
+
+#add-songs-overlay .filter-btn.active .added-count-badge {
+    background: var(--color-button-text) !important;
+    color: var(--primary-color) !important;
+}
+
+/* Стили для кнопки удаления в режиме "Показать добавленные" */
+#add-songs-overlay .filter-btn.active ~ .results-section .song-add-btn.added {
+    background: var(--danger-color) !important;
+    color: var(--color-button-text) !important;
+    border-color: var(--danger-color) !important;
+}
+
+#add-songs-overlay .filter-btn.active ~ .results-section .song-add-btn.added:hover {
+    background: color-mix(in srgb, var(--danger-color) 80%, black) !important;
+    border-color: color-mix(in srgb, var(--danger-color) 80%, black) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* === РЕЗУЛЬТАТЫ ПОИСКА - КОМПАКТНЫЕ === */
+
+#add-songs-overlay .results-section {
+    padding: 8px 10px !important;
+    background: var(--background-color) !important; /* Как в панели сет-листов */
+}
+
+/* Сетка песен - мобильная */
+#add-songs-overlay .songs-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    max-width: 100% !important;
+}
+
+/* Карточка песни - как в панели сет-листов */
+#add-songs-overlay .song-card {
+    padding: 8px 10px !important;
+    border-radius: 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    min-height: 44px !important;
+    background: var(--container-background-color) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+#add-songs-overlay .song-card:hover {
+    background: var(--hover-color) !important;
+    border-color: var(--primary-color) !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Заголовок карточки - в одну строку */
+#add-songs-overlay .song-card-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin: 0 !important;
+    gap: 8px !important;
+    width: 100% !important;
+}
+
+/* Информация о песне */
+#add-songs-overlay .song-info {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+}
+
+#add-songs-overlay .song-title {
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    flex: 1 !important;
+}
+
+/* Мета-информация - компактная */
+#add-songs-overlay .song-meta-info {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+}
+
+#add-songs-overlay .song-category {
+    display: none !important; /* Скрываем категорию для экономии места */
+}
+
+/* Тональность - с правильным темным фоном */
+#add-songs-overlay .song-key {
+    background: rgba(0, 0, 0, 0.3) !important; /* Более темный фон */
+    color: var(--text-color) !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    display: inline-block !important;
+}
+
+/* BPM - с тем же темным фоном */
+#add-songs-overlay .song-bpm {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+    background: rgba(0, 0, 0, 0.3) !important; /* Более темный фон */
+    color: var(--text-color) !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    font-weight: 500 !important;
+    font-size: 0.7rem !important;
+}
+
+#add-songs-overlay .song-bpm i {
+    color: var(--primary-color) !important;
+    font-size: 0.65rem !important;
+}
+
+/* Адаптация для светлой темы */
+body[data-theme="light"] #add-songs-overlay .song-key,
+body[data-theme="light"] #add-songs-overlay .song-bpm {
+    background: rgba(0, 0, 0, 0.1) !important; /* Светлее для светлой темы */
+}
+
+/* Кнопка добавления - компактная */
+#add-songs-overlay .song-add-btn {
+    min-width: auto !important;
+    padding: 6px 10px !important;
+    height: 28px !important;
+    font-size: 0.75rem !important;
+    border-radius: 6px !important;
+    gap: 4px !important;
+    background: transparent !important;
+    color: var(--primary-color) !important;
+    border: 1px solid var(--primary-color) !important;
+}
+
+#add-songs-overlay .song-add-btn:hover {
+    background: var(--primary-color) !important;
+    color: var(--color-button-text) !important;
+}
+
+#add-songs-overlay .song-add-btn.added {
+    background: var(--success-color) !important;
+    color: white !important;
+    border-color: var(--success-color) !important;
+}
+
+/* Карточка добавленной песни - унифицированная с панелью */
+#add-songs-overlay .song-card.added {
+    background: var(--hover-color) !important;
+    opacity: 0.7 !important;
+    border-color: var(--border-color) !important;
+}
+
+#add-songs-overlay .song-add-btn i {
+    font-size: 0.7rem !important;
+}
+
+/* Убираем лишние элементы для мобильных */
+#add-songs-overlay .song-vocalist {
+    display: none !important;
+}
+
+/* === DROPDOWN РЕЗУЛЬТАТОВ ПОИСКА === */
+
+#add-songs-overlay .overlay-search-dropdown {
+    top: calc(100% + 2px) !important;
+    border-radius: 6px !important;
+    max-height: 200px !important;
+}
+
+#add-songs-overlay .search-result-item {
+    padding: 6px 10px !important;
+    font-size: 0.85rem !important;
+}
+
+#add-songs-overlay .search-result-item .result-name {
+    font-size: 0.85rem !important;
+}
+
+#add-songs-overlay .search-result-item .result-category {
+    font-size: 0.7rem !important;
+}
+
+/* === СОСТОЯНИЕ ЗАГРУЗКИ === */
+
+#add-songs-overlay .loading-state {
+    padding: 20px !important;
+    font-size: 0.85rem !important;
+}
+
+#add-songs-overlay .loading-state i {
+    font-size: 1.2rem !important;
+    margin-bottom: 8px !important;
+}
+
+/* === АДАПТАЦИЯ ДЛЯ ЭКРАНОВ < 480px === */
+
+@media (max-width: 480px) {
+    /* Оптимизация фильтров для экранов 380-480px */
+    #add-songs-overlay .filter-select {
+        flex: 0 0 50% !important; /* Половина ширины */
+        font-size: 0.8rem !important;
+        padding: 0 8px !important;
+        min-width: 0 !important;
+    }
+    
+    #add-songs-overlay .filter-btn {
+        flex: 1 !important; /* Занимает оставшееся место */
+        font-size: 0.8rem !important;
+        padding: 0 8px !important;
+        min-width: 0 !important;
+    }
+    
+    /* Сокращаем текст кнопки */
+    #add-songs-overlay .filter-btn span:not(.added-count-badge) {
+        display: inline !important; /* Показываем текст */
+    }
+}
+
+/* === АДАПТАЦИЯ ДЛЯ ОЧЕНЬ МАЛЕНЬКИХ ЭКРАНОВ === */
+
+@media (max-width: 380px) {
+    #add-songs-overlay .fullscreen-header {
+        padding: 6px 8px !important;
+    }
+    
+    #add-songs-overlay .btn-modern.primary span {
+        display: none !important; /* Только иконка */
+    }
+    
+    /* Селект категорий на маленьких экранах */
+    #add-songs-overlay .filter-select {
+        flex: 0 0 40% !important; /* Еще меньше */
+        font-size: 0.75rem !important;
+        padding: 0 6px !important;
+    }
+    
+    /* Кнопка фильтра - только иконка и бейдж */
+    #add-songs-overlay .filter-btn span:not(.added-count-badge) {
+        display: none !important; /* Скрываем текст, но не бейдж */
+    }
+    
+    #add-songs-overlay .filter-btn {
+        padding: 0 8px !important;
+        min-width: 60px !important;
+    }
+    
+    #add-songs-overlay .song-add-btn span {
+        display: none !important; /* Только иконка */
+    }
+    
+    #add-songs-overlay .song-card {
+        padding: 6px 8px !important;
+    }
+}

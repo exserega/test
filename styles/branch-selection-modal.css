@@ -1,0 +1,390 @@
+/* ============================================= */
+/* Branch Selection Modal Styles                 */
+/* Стили для модального окна выбора филиала     */
+/* ============================================= */
+/* Файл: branch-selection-modal.css              */
+/* Назначение: Стили для экрана выбора филиала  */
+/*             при первом входе пользователя     */
+/* Создан: для модульности и удобства поддержки  */
+/* ============================================= */
+
+/* === ОСНОВНОЙ КОНТЕЙНЕР МОДАЛЬНОГО ОКНА === */
+/* Наследует базовые стили от .modal-overlay в modals.css */
+/* Специфичные стили для контента выбора филиала */
+
+.branch-selection-content {
+    max-width: 600px;         /* Максимальная ширина для десктопа */
+    width: 90%;               /* Адаптивная ширина */
+    max-height: 80vh;         /* Ограничение по высоте */
+    overflow-y: auto;         /* Скролл при переполнении */
+    padding: 30px;            /* Внутренние отступы */
+}
+
+/* === ЗАГОЛОВОК И ПОДЗАГОЛОВОК === */
+/* Приветственный текст для новых пользователей */
+
+.modal-subtitle {
+    color: var(--text-secondary);    /* Вторичный цвет текста */
+    margin-bottom: 30px;             /* Отступ снизу */
+    font-size: 1.1rem;               /* Размер шрифта */
+    text-align: center;              /* Центрирование */
+}
+
+/* === СЕТКА ФИЛИАЛОВ === */
+/* Grid layout для карточек филиалов */
+
+.branches-selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Адаптивные колонки */
+    gap: 20px;                       /* Отступы между карточками */
+    margin-bottom: 30px;             /* Отступ снизу */
+}
+
+/* === СОСТОЯНИЕ ЗАГРУЗКИ === */
+/* Отображается пока филиалы загружаются из Firebase */
+
+.loading-branches {
+    grid-column: 1 / -1;             /* Занимает всю ширину грида */
+    text-align: center;              /* Центрирование */
+    padding: 40px;                   /* Отступы */
+    color: var(--text-secondary);    /* Вторичный цвет */
+}
+
+.loading-branches i {
+    font-size: 2rem;                 /* Размер иконки */
+    margin-bottom: 10px;             /* Отступ снизу */
+    display: block;                  /* Блочный элемент */
+}
+
+/* === КАРТОЧКА ФИЛИАЛА === */
+/* Интерактивная карточка для выбора филиала */
+
+.branch-card {
+    background: var(--bg-secondary);     /* Изменено для лучшей видимости */
+    border: 2px solid var(--border-color); /* Граница */
+    border-radius: 12px;                 /* Скругление углов */
+    padding: 20px;                       /* Внутренние отступы */
+    cursor: pointer;                     /* Курсор-указатель */
+    transition: all 0.3s ease;           /* Плавные переходы */
+    text-align: center;                  /* Центрирование текста */
+}
+
+/* Состояние при наведении */
+.branch-card:hover {
+    border-color: var(--accent-primary); /* Акцентная граница */
+    transform: translateY(-2px);         /* Легкий подъем */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Тень */
+}
+
+/* Состояние выбранной карточки */
+.branch-card.selected {
+    border-color: var(--accent-primary);           /* Акцентная граница */
+    background: var(--accent-primary-transparent); /* Полупрозрачный фон */
+}
+
+/* === СОДЕРЖИМОЕ КАРТОЧКИ === */
+
+/* Название филиала */
+.branch-card h3 {
+    margin: 0 0 10px 0;              /* Отступы */
+    color: var(--text-primary);      /* Основной цвет текста */
+    font-size: 1.2rem;               /* Размер шрифта */
+}
+
+/* Описание филиала */
+.branch-card p {
+    margin: 0 0 5px 0;               /* Отступы */
+    color: var(--text-secondary);    /* Вторичный цвет */
+    font-size: 0.9rem;               /* Размер шрифта */
+}
+
+/* Количество участников */
+.branch-card .member-count {
+    color: var(--accent-primary);    /* Акцентный цвет */
+    font-weight: 600;                /* Жирность шрифта */
+}
+
+/* === ИНФОРМАЦИОННЫЙ БЛОК === */
+/* Подсказка о том, что происходит после выбора */
+
+.modal-footer-info {
+    background: var(--bg-info);      /* Информационный фон */
+    padding: 15px;                   /* Отступы */
+    border-radius: 8px;              /* Скругление */
+    display: flex;                   /* Flex контейнер */
+    align-items: center;             /* Выравнивание по центру */
+    gap: 10px;                       /* Отступ между элементами */
+    margin-top: 20px;                /* Отступ сверху */
+}
+
+.modal-footer-info i {
+    color: var(--accent-info);       /* Информационный цвет иконки */
+    font-size: 1.2rem;               /* Размер иконки */
+}
+
+.modal-footer-info span {
+    color: var(--text-secondary);    /* Вторичный цвет текста */
+    font-size: 0.9rem;               /* Размер шрифта */
+    line-height: 1.4;                /* Межстрочный интервал */
+}
+
+/* === КНОПКИ ДЕЙСТВИЙ === */
+/* Контейнер для кнопки подтверждения */
+
+.branch-selection-actions {
+    display: flex;                   /* Flex контейнер */
+    justify-content: center;         /* Центрирование */
+    gap: 15px;                       /* Отступ между кнопками */
+    margin-top: 30px;                /* Отступ сверху */
+}
+
+.branch-selection-actions button {
+    padding: 14px 32px;              /* Увеличенные отступы */
+    border-radius: 10px;             /* Более современное скругление */
+    font-size: 1.05rem;              /* Чуть больше размер шрифта */
+    font-weight: 600;                /* Жирность */
+    cursor: pointer;                 /* Курсор */
+    transition: all 0.3s ease;       /* Плавные переходы */
+    border: 2px solid transparent;   /* Прозрачная граница по умолчанию */
+    display: flex;                   /* Flex для выравнивания иконки и текста */
+    align-items: center;             /* Центрирование по вертикали */
+    gap: 10px;                       /* Отступ между иконкой и текстом */
+}
+
+/* Основная кнопка подтверждения - базовые стили */
+.branch-selection-actions .confirm-button {
+    background: var(--accent-primary); /* Акцентный фон */
+    color: #ffffff !important;         /* ВСЕГДА белый текст */
+    border-color: var(--accent-primary);
+}
+
+/* Иконки внутри кнопки */
+.branch-selection-actions .confirm-button i {
+    color: #ffffff !important;         /* ВСЕГДА белая иконка */
+    font-size: 0.95rem;              /* Размер иконки */
+    flex-shrink: 0;                  /* Предотвращаем сжатие иконки */
+}
+
+/* Текст внутри кнопки */
+.branch-selection-actions .confirm-button span {
+    color: #ffffff !important;         /* ВСЕГДА белый текст */
+}
+
+/* Отключенное состояние кнопки */
+.branch-selection-actions .confirm-button:disabled {
+    background: var(--bg-tertiary);  /* Серый фон */
+    color: var(--text-secondary);    /* Серый текст */
+    border-color: var(--border-color); /* Серая граница */
+    cursor: not-allowed;             /* Запрещающий курсор */
+    opacity: 0.7;                    /* Небольшая прозрачность */
+}
+
+/* Активное состояние при наведении */
+.branch-selection-actions .confirm-button:not(:disabled):hover {
+    transform: translateY(-2px);     /* Легкий подъем */
+    box-shadow: 0 4px 12px rgba(34, 211, 238, 0.3); /* Тень с акцентным цветом */
+}
+
+/* Нажатое состояние */
+.branch-selection-actions .confirm-button:not(:disabled):active {
+    transform: translateY(0);        /* Возврат на место */
+    box-shadow: 0 2px 4px rgba(34, 211, 238, 0.2); /* Меньшая тень */
+}
+
+/* === СОСТОЯНИЯ ОШИБОК И ПУСТЫЕ СОСТОЯНИЯ === */
+/* Когда нет филиалов или произошла ошибка */
+
+.no-branches,
+.error-message {
+    grid-column: 1 / -1;             /* Занимает всю ширину */
+    text-align: center;              /* Центрирование */
+    padding: 40px;                   /* Отступы */
+    color: var(--text-secondary);    /* Вторичный цвет */
+}
+
+.no-branches i,
+.error-message i {
+    font-size: 3rem;                 /* Большая иконка */
+    margin-bottom: 15px;             /* Отступ снизу */
+    display: block;                  /* Блочный элемент */
+    opacity: 0.5;                    /* Полупрозрачность */
+}
+
+/* Красный цвет для ошибок */
+.error-message i {
+    color: var(--danger-color);      /* Цвет опасности/ошибки */
+}
+
+/* === МОБИЛЬНАЯ АДАПТАЦИЯ === */
+/* Стили для маленьких экранов */
+
+/* === СТИЛИ ДЛЯ ПОМОЩИ === */
+/* Блок помощи для тех, кто не нашел свой филиал */
+
+.branch-selection-help {
+    text-align: center;
+}
+
+.branch-selection-help p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.contact-admin-button {
+    background: var(--accent-primary);
+    color: #ffffff !important;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.contact-admin-button span,
+.contact-admin-button i {
+    color: #ffffff !important;
+}
+
+.contact-admin-button:hover {
+    background: var(--accent-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.contact-admin-button i {
+    font-size: 1.2rem;
+}
+
+/* === КОМПАКТНЫЕ КАРТОЧКИ === */
+/* Переопределение стилей для более компактного вида */
+
+.branch-card {
+    padding: 10px 12px !important;
+    text-align: left !important;
+}
+
+.branch-card h3 {
+    font-size: 0.95rem !important;
+    margin-bottom: 4px !important;
+}
+
+.branch-card p {
+    font-size: 0.8rem !important;
+    margin-bottom: 2px !important;
+}
+
+.branch-card p i {
+    font-size: 0.8rem;
+    width: 14px;
+}
+
+/* === МЕДИА ЗАПРОСЫ === */
+@media (max-width: 768px) {
+    .branch-selection-content {
+        padding: 20px;               /* Меньше отступы на мобильных */
+        max-width: 95%;              /* Больше ширины */
+    }
+    
+    .branches-selection-grid {
+        grid-template-columns: 1fr;  /* Одна колонка на мобильных */
+        gap: 10px;                   /* Еще меньше отступы */
+    }
+    
+    .branch-card {
+        padding: 8px 10px !important; /* Еще меньше отступы на мобильных */
+    }
+    
+    .branch-card h3 {
+        font-size: 0.9rem !important;
+    }
+    
+    .branch-card p {
+        font-size: 0.75rem !important;
+    }
+    
+    .modal-footer-info {
+        flex-direction: column;      /* Вертикальное расположение */
+        text-align: center;          /* Центрирование текста */
+    }
+}
+
+/* === ИСПРАВЛЕНИЕ КНОПКИ ЗАКРЫТИЯ === */
+/* Переопределение стилей для правильных цветов иконки X */
+
+#branch-selection-modal .overlay-close-btn {
+    color: var(--text-secondary) !important;
+}
+
+#branch-selection-modal .overlay-close-btn i {
+    color: inherit !important;
+}
+
+/* Темная тема - светлая иконка */
+:root #branch-selection-modal .overlay-close-btn {
+    color: #b0b0b0 !important;
+}
+
+:root #branch-selection-modal .overlay-close-btn i {
+    color: #b0b0b0 !important;
+}
+
+/* Светлая тема - темная иконка */
+[data-theme="light"] #branch-selection-modal .overlay-close-btn {
+    color: #666666 !important;
+}
+
+[data-theme="light"] #branch-selection-modal .overlay-close-btn i {
+    color: #666666 !important;
+}
+
+/* При наведении - всегда белая на красном фоне */
+#branch-selection-modal .overlay-close-btn:hover {
+    background: #ff4444 !important;
+    color: white !important;
+}
+
+#branch-selection-modal .overlay-close-btn:hover i {
+    color: white !important;
+}
+
+/* === УЛУЧШЕНИЕ ВИДИМОСТИ ТЕКСТА НА МОБИЛЬНЫХ === */
+/* Увеличение контраста для лучшей читаемости */
+
+@media (max-width: 768px) {
+    .branch-card h3 {
+        color: var(--text-primary) !important;
+        font-weight: 600 !important;
+    }
+    
+    .branch-card p {
+        color: var(--text-secondary) !important;
+        opacity: 0.9;
+    }
+    
+    .branch-card .member-count {
+        font-weight: 700 !important;
+    }
+    
+    /* Увеличение контраста для выбранной карточки */
+    .branch-card.selected {
+        background: var(--accent-primary) !important;
+        border-color: var(--accent-primary) !important;
+    }
+    
+    .branch-card.selected h3,
+    .branch-card.selected p {
+        color: white !important;
+    }
+    
+    /* Улучшение hover состояния на тач-устройствах */
+    .branch-card:active {
+        transform: scale(0.98);
+        background: var(--bg-tertiary);
+    }
+}

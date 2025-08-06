@@ -1,0 +1,420 @@
+/* ======================================== */
+/* Side Panels & Navigation - Agape Worship v2.3 */
+/* ======================================== */
+
+/* ============================================ */
+/* СТИЛИ ДЛЯ БОКОВЫХ ПАНЕЛЕЙ                   */
+/* ============================================ */
+/* НОВАЯ СИСТЕМА БОКОВЫХ ПАНЕЛЕЙ - ПОЛНАЯ ПЕРЕПИСКА */
+/* ============================================ */
+
+/* БАЗОВЫЕ СТИЛИ ПАНЕЛЕЙ */
+.side-panel {
+    /* КРИТИЧЕСКИ ВАЖНЫЕ РАЗМЕРЫ И ПОЗИЦИОНИРОВАНИЕ */
+    position: fixed !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 320px !important;
+    max-width: 85vw !important;
+    height: 100vh !important;
+    
+    /* ОФОРМЛЕНИЕ */
+    background-color: var(--container-background-color);
+    box-shadow: none;
+    border: 1px solid var(--border-color);
+    
+    /* АНИМАЦИЯ */
+    transition: transform 0.3s ease-in-out;
+    
+    /* СОДЕРЖИМОЕ */
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    gap: 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+    
+    /* Z-INDEX */
+    z-index: 1000;
+}
+
+/* ЛЕВЫЕ ПАНЕЛИ */
+#setlists-panel,
+#my-list-panel {
+    left: 0 !important;
+    right: auto !important;
+    transform: translateX(-100%) !important;
+    border-right: 2px solid var(--primary-color) !important;
+    border-left: none !important;
+}
+
+#setlists-panel.open,
+#my-list-panel.open {
+    transform: translateX(0) !important;
+}
+
+/* ПРАВАЯ ПАНЕЛЬ */
+#repertoire-panel {
+    right: 0 !important;
+    left: auto !important;
+    transform: translateX(100%) !important;
+    border-left: 2px solid var(--primary-color) !important;
+    border-right: none !important;
+}
+
+#repertoire-panel.open {
+    transform: translateX(0) !important;
+}
+
+/* --- Кнопки закрытия панелей --- */
+.side-panel-close-btn {
+    width: 32px; height: 32px; font-size: 1rem;
+    padding: 0 !important; margin: 0 !important;
+    background: var(--container-background-color) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-color) !important;
+    border-radius: 50% !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.2s ease !important;
+}
+.side-panel-close-btn:hover {
+    background: var(--hover-color) !important;
+    border-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
+    transform: scale(1.1) !important;
+}
+.side-panel-close-btn:active {
+    background: var(--primary-color) !important;
+    color: var(--button-text-color) !important;
+    transform: scale(0.95) !important;
+}
+.side-panel-close-btn {
+    position: absolute;
+    top: 8px;
+    z-index: 10;
+}
+#setlists-panel .side-panel-close-btn,
+#my-list-panel .side-panel-close-btn {
+    right: 8px;
+}
+#repertoire-panel .side-panel-close-btn {
+    left: 8px;
+}
+
+/* --- Содержимое панелей --- */
+/* Общие стили для контейнеров списков */
+.list-container {
+    overflow-y: auto; overflow-x: hidden; margin-bottom: 10px; padding: 5px;
+    border: 1px solid var(--border-color); border-radius: var(--radius);
+    background: var(--background-color); /* Фон как у body для контраста */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    word-wrap: break-word; /* Переносим длинные слова */
+    word-break: break-word; /* Принудительно разбиваем слова если нужно */
+}
+.list-container::-webkit-scrollbar { width: 6px; }
+.list-container::-webkit-scrollbar-track { background: var(--border-color); border-radius: 3px;}
+.list-container::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 3px;}
+
+/* Секция "Мой список" (теперь в #my-list-panel) */
+#my-list-panel .list-section { margin-bottom: 0; } /* Убираем нижний отступ */
+#my-list-panel #favorites-list { max-height: none; flex-grow: 1; } /* Растягиваем на всю высоту */
+
+/* Секции внутри панели Сет-листов (#setlists-panel) */
+#setlists-panel .setlist-section { /* Секция со списком сет-листов */
+    flex-shrink: 0; /* Не сжимается */
+}
+#setlists-panel .create-setlist-form { /* Добавили класс форме в HTML? Если нет, стилизуем по-другому */
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px; /* Отступ после формы */
+}
+#setlists-panel #new-setlist-name-input {
+    flex-grow: 1; /* Поле ввода занимает доступное место */
+}
+#setlists-panel #create-setlist-button {
+    flex-shrink: 0; /* Кнопка не сжимается */
+}
+
+#setlists-panel .current-setlist-section { /* Секция с выбранным сет-листом */
+    flex-grow: 1; /* Занимает оставшееся место */
+    display: flex; flex-direction: column;
+    border-top: 1px solid var(--border-color); margin-top: 15px; padding-top: 10px;
+    min-height: 150px;
+}
+#setlists-panel #current-setlist-songs-container { /* Контейнер песен */
+    flex-grow: 1; max-height: none; /* Снимаем ограничение */
+}
+
+
+/* ================================================================ */
+/* === СТИЛИ ДЛЯ КНОПОК "Презентация" и "Удалить" (ВЕРСИЯ 2) === */
+/* ================================================================ */
+
+/* Контейнер для кнопок "Презентация" и "Удалить" */
+#setlists-panel .current-setlist-controls {
+    display: flex !important;      /* Включаем Flexbox (с !important для надежности) */
+    flex-wrap: wrap;             /* Позволяем переноситься */
+    gap: 10px;                   /* Отступ между кнопками */
+    margin-top: 10px;            /* Отступ сверху от заголовка */
+    margin-bottom: 15px;         /* Отступ снизу до списка песен */
+    justify-content: flex-start; /* Выравнивание по левому краю */
+    width: 100%;                 /* Контейнер занимает всю ширину */
+    box-sizing: border-box;
+}
+
+/* Стили для САМИХ кнопок внутри этого контейнера */
+#setlists-panel .current-setlist-controls button {
+    flex-grow: 0 !important;       /* Запрещаем растягиваться */
+    flex-shrink: 0;                /* Запрещаем сжиматься */
+    width: auto !important;        /* Ширина по контенту */
+    max-width: calc(50% - 5px);    /* Макс. ширина ~половина (на случай переноса) */
+    padding: 8px 15px !important;  /* Внутренние отступы (можно настроить) */
+    font-size: 0.85em !important;  /* Размер шрифта (можно настроить) */
+    margin: 0 !important;          /* Убираем внешние отступы от базовых стилей */
+    /* Наследует border-radius и базовый градиент, если не переопределено ниже */
+}
+
+#setlists-panel .current-setlist-controls button i {
+    margin-right: 6px; /* Отступ между иконкой и текстом. Можете поменять на 5px или 8px по вкусу. */
+    /* vertical-align: middle; */ /* Можно добавить для выравнивания иконки по центру текста, если нужно */
+}
+
+/* Стили для кнопки "Презентация" - использует базовые стили */
+
+/* Стили для кнопки "Удалить", чтобы выделить ее */
+#setlists-panel #delete-setlist-button {
+    background: var(--danger-color) !important; /* Ярко-красный фон */
+    border: none !important;                 /* Убираем границу, если есть */
+    color: var(--color-error-text) !important;  /* Семантический цвет для ошибок/удаления */
+    /* Убираем тень, если она есть у базовой кнопки и мешает */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+}
+
+#setlists-panel #delete-setlist-button:hover {
+    background: color-mix(in srgb, var(--danger-color) 85%, black) !important; /* Чуть темнее при наведении */
+    color: var(--color-error-text) !important;
+    transform: none !important; /* Отключаем подпрыгивание, если не нужно */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important; /* Небольшая тень при наведении */
+}
+/* ================================================================ */
+/* === КОНЕЦ СТИЛЕЙ ДЛЯ КНОПОК СЕТ-ЛИСТА === */
+/* ================================================================ */
+
+
+/* Элементы списков (Общее) */
+.favorite-item, .setlist-item, .repertoire-item, .setlist-song-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 10px; border-bottom: 1px solid var(--border-color);
+    font-size: 0.9rem; cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.3s ease;
+    overflow: hidden; /* Строго запрещаем выход за пределы */
+    word-wrap: break-word; /* Переносим длинные слова */
+    word-break: break-word; /* Принудительно разбиваем слова */
+}
+.favorite-item:last-child, .setlist-item:last-child,
+.repertoire-item:last-child, .setlist-song-item:last-child { border-bottom: none; }
+
+.favorite-item:hover, .setlist-item:hover,
+.repertoire-item:hover, .setlist-song-item:hover { background-color: var(--hover-color); }
+
+/* Имена песен/элементов */
+.song-name { /* Общий класс для имени в разных списках */
+    flex-grow: 1; margin-right: 10px; overflow: hidden;
+    white-space: nowrap; text-overflow: ellipsis;
+    color: var(--text-color); transition: color 0.3s ease;
+}
+.setlist-item span.setlist-name-display { /* Имя в списке сет-листов */
+    flex-grow: 1; margin-right: 10px; overflow: hidden;
+    white-space: nowrap; text-overflow: ellipsis;
+}
+
+/* Пустые сообщения */
+.empty-message { padding: 15px; text-align: center; color: var(--label-color); font-style: italic; font-size: 0.9rem; transition: color 0.3s ease;}
+.empty-message.small { font-size: 0.8rem; padding: 8px; }
+
+/* Кнопки удаления, редактирования и заметки в списках */
+.remove-button, .delete-button, .edit-button, .edit-setlist-song-note-button {
+    background: none !important; border: none !important;
+    box-shadow: none !important; padding: 0 5px !important; font-size: 0.95rem !important;
+    line-height: 1 !important; flex-shrink: 0; min-width: auto !important; height: auto !important;
+    transition: color 0.2s ease, transform 0.2s ease !important;
+    transform: none !important; cursor: pointer; border-radius: 50%;
+}
+/* Цвет кнопки удаления */
+.remove-button, .delete-button {
+    color: var(--danger-color) !important;
+}
+.remove-button:hover, .delete-button:hover {
+    color: color-mix(in srgb, var(--danger-color) 70%, white) !important;
+    transform: scale(1.15) !important;
+    box-shadow: none !important; text-decoration: none;
+}
+/* Цвет кнопки редактирования */
+.edit-button {
+    color: var(--primary-color) !important;
+    margin-right: 5px;
+}
+.edit-button:hover {
+    color: color-mix(in srgb, var(--primary-color) 70%, white) !important;
+    transform: scale(1.15) !important;
+}
+.delete-song-from-setlist-button { margin-left: 5px; font-size: 0.9rem !important; }
+
+/* Цвет кнопки заметки */
+.edit-setlist-song-note-button {
+    margin-left: auto; /* Отодвигаем ее и кнопку удаления вправо */
+    margin-right: 5px; /* Небольшой отступ справа */
+    color: var(--label-color) !important; /* Серый цвет по умолчанию */
+    font-size: 0.9rem !important;
+}
+.edit-setlist-song-note-button.has-note i {
+     color: var(--accent-color) !important; /* Цвет иконки, если есть заметка */
+}
+.edit-setlist-song-note-button:hover i {
+     color: var(--primary-color) !important; /* Цвет при наведении */
+     transform: scale(1.15) !important;
+}
+
+
+/* Аккордеон Репертуара */
+.repertoire-key-heading { font-size: 0.9rem; font-weight: 600; color: var(--text-color); background-color: var(--input-bg-color); padding: 6px 12px; margin-top: 10px; margin-bottom: 5px; border-radius: 4px; border-left: 3px solid var(--primary-color); position: sticky; top: -1px; z-index: 1; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+#repertoire-panel-list > .repertoire-key-heading:first-child { margin-top: 0; }
+.repertoire-key-heading i.fas { transition: transform 0.3s ease; margin-left: 10px; font-size: 0.8em; }
+.repertoire-songs-for-key { overflow: hidden; transition: max-height 0.3s ease-out, opacity 0.25s ease-out, margin-top 0.3s ease-out, margin-bottom 0.3s ease-out; max-height: 800px; opacity: 1; margin-top: 5px; margin-bottom: 8px; }
+.repertoire-songs-for-key.collapsed { max-height: 0; opacity: 0; margin-top: 0; margin-bottom: 0; }
+.repertoire-key-heading i.fa-chevron-up { transform: rotate(180deg); }
+.repertoire-songs-for-key .repertoire-item { padding-left: 15px; }
+.repertoire-songs-for-key .repertoire-item:first-child { border-top: 1px dotted var(--border-color); margin-top: 5px; transition: border-color 0.3s ease;}
+
+/* Панель Репертуара - Селектор вокалиста */
+.repertoire-vocalist-selector { display: flex; flex-direction: column; gap: 5px; flex-shrink: 0; margin-bottom: 10px; /* Добавили отступ снизу */ }
+.repertoire-vocalist-selector label { font-size: 0.8rem; color: var(--label-color); text-transform: uppercase; transition: color 0.3s ease;}
+#repertoire-panel #vocalist-select { width: 100%; padding: 10px 14px; padding-right: 35px; font-size: 0.95rem; background-color: var(--input-bg-color); height: 38px; box-sizing: border-box; }
+#repertoire-panel-list { /* Контейнер для аккордеона */ flex-grow: 1; min-height: 100px; overflow-y: auto; margin-bottom: 0; padding: 5px; border: 1px solid var(--border-color); border-radius: var(--radius); background: var(--background-color); max-height: none !important; transition: background-color 0.3s ease, border-color 0.3s ease; }
+#repertoire-panel-list::-webkit-scrollbar { width: 6px; }
+#repertoire-panel-list::-webkit-scrollbar-track { background: var(--border-color); border-radius: 3px;}
+#repertoire-panel-list::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 3px;}
+#repertoire-panel .repertoire-item .song-name { line-height: 1.4; }
+
+/* Стили для редактирования сет-листа */
+.setlist-item span.setlist-name-display { cursor: pointer; }
+.setlist-edit-button { background: none !important; border: none !important; color: var(--label-color) !important; box-shadow: none !important; padding: 0 4px !important; margin: 0 !important; font-size: 0.85rem !important; line-height: 1 !important; flex-shrink: 0; min-width: auto !important; height: auto !important; cursor: pointer; opacity: 0; transition: opacity 0.2s ease, color 0.2s ease !important; }
+.setlist-item:hover .setlist-edit-button { opacity: 0.7; }
+.setlist-edit-button:hover { opacity: 1 !important; color: var(--accent-color) !important; }
+.setlist-item input.edit-setlist-input { flex-grow: 1; font-size: 0.95rem; padding: 4px 8px; margin: -4px 0; border: 1px solid var(--primary-color); background-color: var(--input-bg-color); color: var(--text-color); border-radius: 4px; outline: none; box-shadow: 0 0 3px color-mix(in srgb, var(--primary-color) 30%, transparent); }
+.setlist-item.is-editing .setlist-edit-button { display: none; }
+.setlist-item.is-editing span.setlist-name-display { display: none; }
+
+
+/* ============================================ */
+/* НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ                     */
+/* ============================================ */
+.mobile-bottom-nav {
+    position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
+    background-color: var(--container-background-color);
+    border-top: 1px solid var(--border-color);
+    box-shadow: none;
+    display: flex; justify-content: space-around; align-items: stretch;
+    z-index: 1000; padding: 0; box-sizing: border-box;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+.mobile-nav-button {
+    background: none; border: none; box-shadow: none; padding: 5px; margin: 0;
+    font-size: 0.7rem; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; 
+    /* Равномерный размер для всех кнопок */
+    flex: 1 1 25%;
+    width: 25%;
+    min-width: 0; /* Предотвращает переполнение */
+    height: 100%; cursor: pointer;
+    transition: background-color 0.2s ease; border-radius: 0;
+    background-image: none !important; position: relative;
+    /* Добавляем правую границу для всех кнопок кроме последней */
+    border-right: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+/* Убираем границу у последней кнопки */
+.mobile-nav-button:last-child {
+    border-right: none;
+}
+
+/* Удаляем старые разделительные линии через псевдоэлементы */
+.mobile-nav-button:not(:last-child)::after {
+    display: none;
+}
+
+/* Разделительные линии между кнопками */
+.mobile-nav-button i { font-size: 1.3rem; margin-bottom: 3px; transition: color 0.2s ease; }
+.mobile-nav-button span { 
+    transition: color 0.2s ease; 
+    font-size: 0.7rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* Цвета для темной темы */
+nav.mobile-bottom-nav .mobile-nav-button i,
+nav.mobile-bottom-nav .mobile-nav-button span { color: var(--text-color) !important; }
+nav.mobile-bottom-nav .mobile-nav-button:hover i,
+nav.mobile-bottom-nav .mobile-nav-button:hover span,
+nav.mobile-bottom-nav .mobile-nav-button:active i,
+nav.mobile-bottom-nav .mobile-nav-button:active span { color: var(--accent-color) !important; }
+nav.mobile-bottom-nav .mobile-nav-button:hover { background-color: var(--hover-color); }
+nav.mobile-bottom-nav .mobile-nav-button:active { background-color: var(--border-color); }
+
+/* Разделительные линии для темной темы */
+[data-theme="dark"] .mobile-nav-button {
+    border-right-color: rgba(255, 255, 255, 0.1);
+}
+[data-theme="dark"] .mobile-nav-button:last-child {
+    border-right: none;
+}
+
+/* Активная кнопка */
+nav.mobile-bottom-nav .mobile-nav-button.active {
+    background-color: var(--active-background-color);
+}
+nav.mobile-bottom-nav .mobile-nav-button.active i,
+nav.mobile-bottom-nav .mobile-nav-button.active span {
+    color: var(--accent-color) !important;
+}
+
+/* Цвета для светлой темы */
+body[data-theme="light"] nav.mobile-bottom-nav .mobile-nav-button i,
+body[data-theme="light"] nav.mobile-bottom-nav .mobile-nav-button span { color: var(--text-color) !important; }
+body[data-theme="light"] nav.mobile-bottom-nav .mobile-nav-button:hover i,
+body[data-theme="light"] nav.mobile-bottom-nav .mobile-nav-button:hover span,
+body[data-theme="light"] nav.mobile-bottom-nav .mobile-nav-button:active i,
+body[data-theme="light"] nav.mobile-bottom-nav .mobile-nav-button:active span { color: var(--accent-color) !important; }
+body[data-theme="light"] nav.mobile-bottom-nav .mobile-nav-button:hover { background-color: var(--hover-color); }
+body[data-theme="light"] nav.mobile-bottom-nav .mobile-nav-button:active { background-color: var(--border-color); }
+
+/* Разделительные линии для светлой темы */
+[data-theme="light"] .mobile-nav-button {
+    border-right-color: rgba(0, 0, 0, 0.1);
+}
+[data-theme="light"] .mobile-nav-button:last-child {
+    border-right: none;
+}
+
+/* Разделительные линии для кнопок */
+#toggle-my-list { /* Средняя кнопка */
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    transition: border-color 0.3s ease;
+}
+
+/* ======================================== */
+/* Fix для корректного отображения тональностей */
+/* ======================================== */
+
+/* Отменяем uppercase для тональностей во всех панелях 
+   Важно для корректного отображения Gb, Eb, Ab и т.д. */
+#setlists-panel .song-key,
+#my-list-panel .song-key,
+#repertoire-panel .song-key {
+    text-transform: none !important;
+}
+

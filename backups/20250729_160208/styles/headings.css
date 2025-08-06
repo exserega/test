@@ -1,0 +1,67 @@
+/* ======================================== */
+/* Headings Styles - Agape Worship v2.3   */
+/* ======================================== */
+
+/* --- Headings --- */
+#song-title { /* Заголовок песни как legend */
+    font-size: 1.0rem; /* Уменьшили размер шрифта */
+    font-weight: 600;
+    color: var(--text-color);
+    letter-spacing: 0.5px;
+    padding: 0 12px; /* Стандартные отступы как у других legend */
+    background: var(--container-background-color);
+    transition: color 0.3s ease;
+    text-align: center; /* Выравнивание по центру */
+    margin: 0; /* Убираем лишние отступы */
+    display: flex; /* Flexbox для размещения кнопки */
+    align-items: center; /* Центрируем по вертикали */
+    justify-content: center; /* Центрируем по горизонтали */
+    gap: 10px; /* Отступ между названием и кнопкой */
+}
+
+.song-title-text {
+    /* Стили для текста названия песни */
+    flex: 1; /* Занимает доступное пространство */
+    text-align: center; /* Центрируем текст */
+}
+
+
+
+.legend-button {
+    /* Специальные стили для кнопки в legend */
+    width: 28px !important; /* Компактный размер */
+    height: 28px !important;
+    font-size: 0.8rem !important; /* Маленькая иконка */
+    flex-shrink: 0; /* Не сжимается */
+    opacity: 0.8; /* Полупрозрачная */
+    transition: opacity 0.2s ease;
+}
+
+.legend-button:hover {
+    opacity: 1; /* Полностью видимая при наведении */
+}
+
+/* Заголовки секций в панелях (h3) */
+.list-section h3, #repertoire-panel .panel-header {
+     text-align: center;
+     font-size: 1.1rem;
+     color: var(--primary-color);
+     margin-top: 0;
+     margin-bottom: 8px;   /* Оставляем уменьшенный нижний отступ */
+     padding-top: 0;
+     padding-bottom: 6px;
+     border-bottom: 1px solid var(--border-color);
+}
+#repertoire-panel .panel-header { /* Особый стиль для заголовка Репертуара */
+     text-align: center;
+     font-size: 1.15rem;
+     color: var(--primary-color);
+}
+/* Заголовок текущего сет-листа */
+#current-setlist-title {
+    text-align: center; font-size: 1.1rem; font-weight: 600;
+    color: var(--text-color); margin-bottom: 10px;
+    padding: 5px; border-bottom: none; /* Убираем границу */
+    background-color: var(--input-bg-color); border-radius: var(--radius);
+    white-space: normal; overflow-wrap: break-word; word-break: break-word;
+}

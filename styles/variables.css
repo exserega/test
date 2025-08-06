@@ -1,0 +1,72 @@
+/* ======================================== */
+/* CSS Variables - Agape Worship v2.3     */
+/* ======================================== */
+
+/* --- Theme Variables --- */
+:root {
+    /* Dark Theme (Default) */
+    --primary-color: #22d3ee;
+    --secondary-color: #06b6d4;
+    --background-color: #111827;
+    --container-background-color: #1f2937;
+    --text-color: #e5e7eb;
+    --border-color: #374151;
+    --hover-color: #374151;
+    --shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+    --radius: 8px;
+    --accent-color: #67e8f9;
+    --danger-color: #fb7185;
+    --button-text-color: #111827;
+    --link-color: var(--accent-color);
+    --input-bg-color: #374151;
+    --label-color: #9ca3af;
+    --glow-color: rgba(34, 211, 238, 0.4);
+    
+    /* Additional colors for modals and UI */
+    --bg-tertiary: #1a1f2e;
+    --bg-info: rgba(34, 211, 238, 0.1);
+    --accent-info: #22d3ee;
+    --accent-primary-transparent: rgba(34, 211, 238, 0.1);
+    --accent-primary-hover: #06b6d4;
+    
+    /* Typography System - Professional Scale */
+    --font-xs: 0.75rem;    /* 12px - вспомогательный текст */
+    --font-sm: 0.875rem;   /* 14px - основной текст кнопок */
+    --font-md: 1rem;       /* 16px - поиск, важные элементы */
+    --font-lg: 1.125rem;   /* 18px - заголовки overlay */
+    --font-xl: 1.25rem;    /* 20px - крупные заголовки */
+}
+
+/* --- Light Theme Variables --- */
+body[data-theme="light"] {
+    --primary-color: #339af0;
+    --secondary-color: #1c7ed6;
+    --background-color: #ffffff;
+    --container-background-color: #f8fafc;
+    --text-color: #1e293b;
+    --border-color: #e2e8f0;
+    --hover-color: #f1f5f9;
+    --shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
+    /* --radius: 8px; */
+    --accent-color: #1c7ed6;
+    --danger-color: #f43f5e;
+    --button-text-color: #ffffff;
+    --link-color: var(--accent-color);
+    --input-bg-color: #f8fafc;
+    --label-color: #475569;
+    --glow-color: rgba(28, 126, 214, 0.3);
+    
+    /* Additional colors for modals and UI */
+    --bg-tertiary: #f1f5f9;
+    --bg-info: rgba(51, 154, 240, 0.1);
+    --accent-info: #339af0;
+    --accent-primary-transparent: rgba(51, 154, 240, 0.1);
+    --accent-primary-hover: #1c7ed6;
+}
+
+/* Принудительно убираем фоновые артефакты в светлой теме */
+html[data-theme="light"], 
+body[data-theme="light"] {
+    background-image: none !important;
+    background-attachment: scroll !important;
+}

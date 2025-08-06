@@ -1,0 +1,992 @@
+/* ====================================
+   ⚙️ SETTINGS PAGE STYLES
+   ==================================== */
+
+/* CSS Variables - из основного сайта */
+:root {
+    /* Темная тема по умолчанию */
+    --bg-color: #111827;
+    --bg-secondary: #1f2937;
+    --text-color: #e5e7eb;
+    --text-secondary: #9ca3af;
+    --text-tertiary: #6b7280;
+    --border-color: #374151;
+    --accent-color: #ff6b6b;
+    --accent-hover: #ff5252;
+    --accent-danger: #f44336;
+    --accent-warning: #ff9800;
+    --hover-color: rgba(255, 107, 107, 0.1);
+    --success-color: #4caf50;
+    --accent-primary: #ff6b6b;
+    --accent-primary-hover: #ff5252;
+    --bg-primary: #111827;
+    --bg-tertiary: #374151;
+    --text-primary: #e5e7eb;
+    --hover-bg: rgba(255, 255, 255, 0.1);
+}
+
+/* Светлая тема */
+[data-theme="light"] {
+    --bg-color: #ffffff;
+    --bg-secondary: #f8fafc;
+    --text-color: #333333;
+    --text-secondary: #666666;
+    --text-tertiary: #999999;
+    --border-color: #e2e8f0;
+    --accent-color: #ff6b6b;
+    --accent-hover: #ff5252;
+    --accent-danger: #f44336;
+    --accent-warning: #ff9800;
+    --hover-color: rgba(255, 107, 107, 0.1);
+    --success-color: #4caf50;
+    --accent-primary: #ff6b6b;
+    --accent-primary-hover: #ff5252;
+    --bg-primary: #ffffff;
+    --bg-tertiary: #f1f5f9;
+    --text-primary: #333333;
+    --hover-bg: rgba(0, 0, 0, 0.05);
+}
+
+body {
+    margin: 0;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Ensure all elements use Montserrat font */
+h1, h2, h3, h4, h5, h6, 
+button, input, select, textarea,
+.btn, .button, .badge {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+    transition: background-color 0.3s ease, 
+                color 0.3s ease, 
+                border-color 0.3s ease;
+}
+
+.settings-container {
+    max-width: 600px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: var(--bg-color);
+}
+
+/* Header */
+.settings-header {
+    background: var(--bg-secondary);
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.back-button i {
+    color: inherit;
+}
+
+/* Dark theme - light arrow */
+:root .back-button {
+    color: #b0b0b0;
+}
+
+:root .back-button i {
+    color: #b0b0b0;
+}
+
+/* Light theme - dark arrow */
+[data-theme="light"] .back-button {
+    color: #666666;
+}
+
+[data-theme="light"] .back-button i {
+    color: #666666;
+}
+
+.back-button:hover {
+    background: var(--hover-bg);
+    color: var(--text-primary);
+}
+
+.back-button:hover i {
+    color: var(--text-primary);
+}
+
+.settings-header h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* User Info Section */
+.user-info-section {
+    background: var(--bg-secondary);
+    padding: 30px 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.user-avatar {
+    font-size: 60px;
+    color: var(--text-tertiary);
+}
+
+.user-details h2 {
+    margin: 0 0 5px;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-color);
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.user-contact {
+    margin: 0 0 10px;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.user-badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.badge.admin {
+    background: var(--accent-color);
+    color: white;
+}
+
+.badge.pending {
+    background: var(--accent-warning);
+    color: white;
+}
+
+/* Settings Sections */
+.settings-sections {
+    padding: 20px;
+}
+
+.settings-section {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.settings-section h3 {
+    margin: 0 0 15px;
+    font-size: 18px;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.settings-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.settings-item:last-child {
+    border-bottom: none;
+}
+
+.setting-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.setting-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.setting-value {
+    font-size: 16px;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.edit-button {
+    background: none;
+    border: none;
+    color: var(--accent-color);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.edit-button:hover {
+    background: var(--hover-color);
+}
+
+/* Transfer Status */
+.transfer-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--accent-warning);
+    border-radius: 8px;
+    color: var(--accent-warning);
+    font-size: 14px;
+    margin: 15px 0;
+}
+
+/* Settings Link */
+.settings-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-primary) !important;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.settings-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: var(--accent-primary);
+    transition: width 0.3s ease;
+    opacity: 0.1;
+}
+
+.settings-link:hover::before {
+    width: 100%;
+}
+
+.settings-link:hover {
+    background: var(--bg-secondary);
+    border-color: var(--accent-primary);
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.2);
+}
+
+.settings-link i:first-child {
+    color: var(--accent-primary) !important;
+    font-size: 1.1rem;
+}
+
+.settings-link i:last-child {
+    color: var(--text-secondary) !important;
+    transition: transform 0.3s ease;
+}
+
+.settings-link:hover i:last-child {
+    transform: translateX(4px);
+    color: var(--accent-primary) !important;
+}
+
+/* Logout Button */
+.logout-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 20px;
+    background: transparent;
+    color: var(--accent-danger) !important;
+    border: 1px solid var(--accent-danger);
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.logout-button i {
+    color: var(--accent-danger) !important;
+}
+
+.logout-button:hover {
+    background: var(--accent-danger);
+    color: white !important;
+}
+
+.logout-button:hover i {
+    color: white !important;
+}
+
+/* Action Buttons */
+.action-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 20px;
+    background: var(--accent-color);
+    color: white !important;
+    border: 1px solid var(--accent-color);
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 15px;
+    text-decoration: none;
+}
+
+.action-button i {
+    color: white !important;
+}
+
+.action-button:hover {
+    background: var(--accent-hover);
+}
+
+/* Settings Link */
+.settings-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 0;
+    color: var(--text-color);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.settings-link:hover {
+    color: var(--accent-color);
+}
+
+.settings-link i:first-child {
+    font-size: 20px;
+    width: 24px;
+    text-align: center;
+    color: var(--text-tertiary);
+}
+
+.settings-link span {
+    flex: 1;
+}
+
+.settings-link i:last-child {
+    color: var(--text-tertiary);
+}
+
+/* Logout Button */
+.logout-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 20px;
+    background: transparent;
+    color: var(--accent-danger);
+    border: 1px solid var(--accent-danger);
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.logout-button:hover {
+    background: var(--accent-danger);
+    color: white;
+}
+
+/* ====================================
+   BRANCH MANAGEMENT STYLES
+   ==================================== */
+
+.additional-branches-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.additional-branch-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.branch-requests-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.branch-requests-section h4 {
+    color: var(--text-primary);
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 1rem;
+    margin-bottom: 12px;
+}
+
+.branch-request-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    min-height: 60px;
+}
+
+.branch-request-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.branch-request-type {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.branch-request-name {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.branch-request-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.branch-request-status {
+    padding: 6px 14px;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+}
+
+.branch-request-status.pending {
+    background: rgba(255, 152, 0, 0.15);
+    color: #ff9800;
+}
+
+/* Dark theme specific */
+:root .branch-request-status.pending {
+    background: rgba(255, 152, 0, 0.2);
+    color: #ffa726;
+}
+
+/* Light theme specific */
+[data-theme="light"] .branch-request-status.pending {
+    background: rgba(255, 152, 0, 0.1);
+    color: #f57c00;
+}
+
+.branch-request-cancel {
+    padding: 6px 8px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.branch-request-cancel i {
+    color: inherit;
+    font-size: 0.9rem;
+}
+
+/* Dark theme - light icon */
+:root .branch-request-cancel {
+    color: #999999;
+}
+
+:root .branch-request-cancel i {
+    color: #999999;
+}
+
+/* Light theme - dark icon */
+[data-theme="light"] .branch-request-cancel {
+    color: #666666;
+}
+
+[data-theme="light"] .branch-request-cancel i {
+    color: #666666;
+}
+
+.branch-request-cancel:hover {
+    background: var(--danger);
+    color: white !important;
+    border-color: var(--danger);
+}
+
+.branch-request-cancel:hover i {
+    color: white !important;
+}
+
+.branch-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.action-button.secondary {
+    background: transparent;
+    color: var(--accent-primary) !important;
+    border: 1px solid var(--accent-primary);
+}
+
+.action-button.secondary i {
+    color: var(--accent-primary) !important;
+}
+
+.action-button.secondary:hover {
+    background: var(--accent-primary);
+    color: white !important;
+}
+
+.action-button.secondary:hover i {
+    color: white !important;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-color);
+    animation: modalSlideIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text-primary);
+}
+
+/* Modal Enhancements */
+.close-modal {
+    background: transparent;
+    border: 2px solid transparent;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.close-modal i {
+    transition: transform 0.3s ease;
+}
+
+.close-modal:hover {
+    background: var(--accent-danger);
+    color: white !important;
+    border-color: var(--accent-danger);
+    transform: rotate(90deg);
+}
+
+.close-modal:hover i {
+    color: white !important;
+}
+
+/* Dark theme specific for close button */
+:root .close-modal {
+    color: #b0b0b0 !important; /* Светлая иконка в темной теме */
+}
+
+:root .close-modal i {
+    color: #b0b0b0 !important;
+}
+
+:root .close-modal:hover {
+    background: #ff4444;
+    border-color: #ff4444;
+    color: white !important;
+}
+
+:root .close-modal:hover i {
+    color: white !important;
+}
+
+/* Light theme specific for close button */
+[data-theme="light"] .close-modal {
+    color: #666666 !important; /* Темная иконка в светлой теме */
+}
+
+[data-theme="light"] .close-modal i {
+    color: #666666 !important;
+}
+
+[data-theme="light"] .close-modal:hover {
+    background: #ff5252;
+    border-color: #ff5252;
+    color: white !important;
+}
+
+[data-theme="light"] .close-modal:hover i {
+    color: white !important;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+/* Simplified modal with single select */
+.modal-body:has(.form-control-large):not(:has(.form-group:nth-child(2))) {
+    padding: 30px 20px;
+}
+
+.modal-body:has(.form-control-large) .form-group:only-child {
+    margin-bottom: 0;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--bg-primary);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.4;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
+    background: var(--bg-secondary);
+}
+
+/* Dark theme form controls */
+:root .form-control {
+    background: #2a2a2a;
+    border-color: #444444;
+    color: #ffffff;
+}
+
+:root .form-control:focus {
+    background: #333333;
+    border-color: #ff6b6b;
+}
+
+/* Select elements specific styles */
+:root select.form-control {
+    background: #2a2a2a;
+    color: #ffffff !important;
+    padding: 12px 16px;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23999' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 12px;
+    padding-right: 40px;
+    line-height: 1.4;
+    height: auto;
+}
+
+/* Large select for modal windows */
+:root select.form-control-large {
+    padding: 16px 20px;
+    font-size: 1rem;
+    min-height: 52px;
+    line-height: 1.5;
+    height: auto;
+}
+
+:root select.form-control option {
+    background: #2a2a2a;
+    color: #ffffff;
+    padding: 10px;
+}
+
+/* Light theme form controls */
+[data-theme="light"] .form-control {
+    background: #ffffff;
+    border-color: #e0e0e0;
+    color: #333333;
+}
+
+[data-theme="light"] .form-control:focus {
+    background: #f9f9f9;
+    border-color: #ff6b6b;
+}
+
+/* Light theme select */
+[data-theme="light"] select.form-control {
+    background: #ffffff;
+    color: #333333 !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23666' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+}
+
+/* Large select for light theme */
+[data-theme="light"] select.form-control-large {
+    padding: 16px 20px;
+    font-size: 1rem;
+    min-height: 52px;
+    line-height: 1.5;
+    height: auto;
+}
+
+[data-theme="light"] select.form-control option {
+    background: #ffffff;
+    color: #333333;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Modal Button Improvements */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary {
+    background: var(--accent-primary);
+    color: white !important;
+    box-shadow: 0 2px 4px rgba(255, 107, 107, 0.2);
+}
+
+.btn-primary:hover {
+    background: var(--accent-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(255, 107, 107, 0.2);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--text-secondary) !important;
+    border: 2px solid var(--border-color);
+    font-weight: 500;
+}
+
+.btn-secondary:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary) !important;
+    border-color: var(--text-secondary);
+}
+
+/* Dark theme specific for buttons */
+:root .btn-secondary {
+    color: #b0b0b0 !important;
+    border-color: #444444;
+}
+
+:root .btn-secondary:hover {
+    background: #3a3a3a;
+    color: #ffffff !important;
+    border-color: #666666;
+}
+
+/* Light theme specific for buttons */
+[data-theme="light"] .btn-secondary {
+    color: #666666 !important;
+    border-color: #dddddd;
+}
+
+[data-theme="light"] .btn-secondary:hover {
+    background: #f0f0f0;
+    color: #333333 !important;
+    border-color: #cccccc;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .settings-sections {
+        padding: 15px;
+    }
+    
+    .settings-section {
+        padding: 15px;
+    }
+    
+    .branch-actions {
+        flex-direction: column;
+    }
+    
+    .action-button {
+        width: 100%;
+    }
+    
+    /* Fix admin panel button on mobile */
+    .settings-link {
+        padding: 16px 24px;
+        gap: 16px;
+        justify-content: space-between;
+    }
+    
+    .settings-link i:first-child {
+        font-size: 1rem;
+        flex-shrink: 0;
+        width: 20px;
+        text-align: center;
+    }
+    
+    .settings-link span {
+        flex: 1;
+        text-align: left;
+        padding: 0 8px;
+    }
+    
+    .settings-link i:last-child {
+        margin-left: auto;
+        flex-shrink: 0;
+        font-size: 0.9rem;
+    }
+    
+    /* Prevent hover transform on mobile */
+    .settings-link:hover {
+        transform: none;
+    }
+}

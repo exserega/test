@@ -1,0 +1,150 @@
+/* ======================================== */
+/* Color Tokens System - Agape Worship     */
+/* Решение проблем с контрастностью тем    */
+/* ======================================== */
+
+/* 
+   ПРАВИЛА ИСПОЛЬЗОВАНИЯ:
+   1. ВСЕГДА используйте эти токены вместо жестких цветов
+   2. НИКОГДА не используйте color: white или color: black напрямую
+   3. Проверяйте контрастность в обеих темах
+*/
+
+/* === БАЗОВЫЕ ЦВЕТОВЫЕ ТОКЕНЫ === */
+:root {
+    /* Основные цвета контента */
+    --color-text-primary: var(--text-color);
+    --color-text-secondary: #9ca3af;
+    --color-text-inverse: #111827;  /* Инверсный текст для кнопок */
+    
+    /* Цвета для интерактивных элементов */
+    --color-button-text: var(--button-text-color);
+    --color-button-bg: var(--primary-color);
+    --color-button-hover-bg: var(--secondary-color);
+    
+    /* Цвета для специальных компонентов */
+    --color-tooltip-bg: rgba(0, 0, 0, 0.9);
+    --color-tooltip-text: #ffffff;
+    --color-modal-overlay: rgba(0, 0, 0, 0.8);
+    --color-notification-text: #ffffff;
+    
+    /* Цвета для состояний */
+    --color-success-text: #ffffff;
+    --color-success-bg: #10b981;
+    --color-error-text: #ffffff;
+    --color-error-bg: #ef4444;
+    --color-warning-text: #ffffff;
+    --color-warning-bg: #f59e0b;
+    
+    /* Цвета для панелей */
+    --color-panel-header-text: var(--text-color);
+    --color-panel-close-text: var(--text-color);
+    
+    /* Цвета для оверлеев */
+    --color-overlay-controls-bg: rgba(80, 80, 80, 0.8);
+    --color-overlay-controls-text: #ffffff;
+    --color-overlay-controls-border: rgba(255, 255, 255, 0.3);
+    
+    /* Цвета для активных состояний */
+    --color-active-bg: var(--primary-color);
+    --color-active-text: var(--text-inverse);
+}
+
+/* === СВЕТЛАЯ ТЕМА - ПЕРЕОПРЕДЕЛЕНИЯ === */
+body[data-theme="light"] {
+    /* Основные цвета контента */
+    --color-text-secondary: #64748b;
+    --color-text-inverse: #ffffff;
+    
+    /* Цвета для специальных компонентов */
+    --color-tooltip-bg: rgba(255, 255, 255, 0.95);
+    --color-tooltip-text: #1e293b;
+    --color-modal-overlay: rgba(0, 0, 0, 0.5);
+    
+    /* Цвета для оверлеев (остаются темными для контраста) */
+    --color-overlay-controls-bg: rgba(50, 50, 50, 0.8);
+    --color-overlay-controls-text: #ffffff;
+    --color-overlay-controls-border: rgba(255, 255, 255, 0.2);
+    
+    /* Цвета для активных состояний */
+    --color-active-text: #ffffff;
+}
+
+/* === СЕМАНТИЧЕСКИЕ ТОКЕНЫ ДЛЯ КОМПОНЕНТОВ === */
+:root {
+    /* Метроном */
+    --metronome-button-active-bg: var(--color-active-bg);
+    --metronome-button-active-text: var(--color-active-text);
+    --metronome-slider-track: var(--primary-color);
+    
+    /* Сет-листы */
+    --setlist-add-button-text: var(--color-button-text);
+    --setlist-song-remove-text: var(--color-error-text);
+    
+    /* Презентация */
+    --presentation-controls-bg: var(--color-overlay-controls-bg);
+    --presentation-controls-text: var(--color-overlay-controls-text);
+    --presentation-controls-border: var(--color-overlay-controls-border);
+}
+
+/* === УТИЛИТАРНЫЕ КЛАССЫ === */
+/* Используйте эти классы вместо inline стилей */
+.text-on-primary {
+    color: var(--color-text-inverse) !important;
+}
+
+.text-on-dark {
+    color: var(--color-overlay-controls-text) !important;
+}
+
+.bg-interactive {
+    background-color: var(--color-button-bg);
+    color: var(--color-button-text);
+}
+
+.bg-success {
+    background-color: var(--color-success-bg);
+    color: var(--color-success-text);
+}
+
+.bg-error {
+    background-color: var(--color-error-bg);
+    color: var(--color-error-text);
+}
+
+/* === РАЗМЕРЫ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ === */
+:root {
+    /* Основные размеры контейнеров */
+    --mobile-container-width: 430px;
+    --mobile-container-max-width: min(430px, calc(100vw - 32px));
+    --mobile-padding-horizontal: 16px;
+    --mobile-padding-vertical: 12px;
+    
+    /* Размеры модальных окон */
+    --mobile-modal-width: 380px;
+    --mobile-modal-max-width: calc(100vw - 40px);
+    
+    /* Размеры кнопок */
+    --mobile-button-height: 48px;
+    --mobile-button-min-width: 120px;
+    
+    /* Отступы и промежутки */
+    --mobile-gap-small: 8px;
+    --mobile-gap-medium: 16px;
+    --mobile-gap-large: 24px;
+}
+
+/* === МЕДИА-ЗАПРОСЫ ДЛЯ МОБИЛЬНЫХ === */
+@media (max-width: 480px) {
+    :root {
+        --mobile-container-width: 100%;
+        --mobile-modal-width: 100%;
+    }
+}
+
+@media (max-width: 380px) {
+    :root {
+        --mobile-padding-horizontal: 12px;
+        --mobile-button-height: 44px;
+    }
+}

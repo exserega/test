@@ -1,0 +1,64 @@
+/* ======================================== */
+/* Song Display Styles - Agape Worship v2.3 */
+/* ======================================== */
+
+/* --- Отображение Песни --- */
+#song-content { 
+    background: var(--container-background-color); 
+    padding: 10px 12px 15px 12px; /* Уменьшили отступы с 15px 20px 20px 20px */
+    border-radius: var(--radius); 
+    box-shadow: none; 
+    margin-top: 0px; /* МАКСИМАЛЬНОЕ сближение: убираем margin-top полностью */
+    position: relative; 
+    overflow: hidden; 
+    border: 1px solid var(--border-color); 
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    /* Убираем лишние margin у fieldset */
+    margin-left: 0;
+    margin-right: 0;
+}
+#song-content pre { 
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; /* ВОЗВРАЩАЕМ исходный шрифт */
+    white-space: pre; /* pre для точного позиционирования */
+    word-wrap: normal; /* отключаем word-wrap */
+    line-height: 1.3; /* Уменьшили с 1.5 до 1.3 для стандартизации межстрочных интервалов */
+    font-size: var(--lyrics-font-size, 1rem); 
+    color: var(--text-color); 
+    margin: 0; 
+    padding-top: 6px; 
+    overflow-x: auto; 
+    transition: color 0.3s ease;
+    letter-spacing: 0; /* убираем letter-spacing */
+    word-spacing: 0; /* убираем word-spacing */
+    tab-size: 1; /* КРИТИЧНО: размер табуляции */
+    -moz-tab-size: 1; /* для Firefox */
+    font-variant-numeric: tabular-nums; /* моноширинные цифры */
+}
+#song-content .chord {
+    font-weight: 700 !important;
+    color: var(--primary-color);
+    display: inline; /* inline для точного позиционирования */
+    background-color: color-mix(in srgb, var(--accent-color) 2%, transparent); /* ВОЗВРАЩАЕМ еле заметный фон */
+    padding: 1px 2px; /* МИНИМАЛЬНЫЙ padding для фона */
+    border-radius: 3px; /* ВОЗВРАЩАЕМ скругления для фона */
+    margin: 0; /* margin остается 0 */
+    line-height: inherit; /* наследуем line-height от родителя */
+    vertical-align: baseline; /* Выравнивание по базовой линии */
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+/* Стили аккордов в светлой теме */
+body[data-theme="light"] #song-content .chord {
+    color: var(--secondary-color);
+    background-color: color-mix(in srgb, var(--accent-color) 5%, transparent);
+}
+
+/* СТАРЫЕ СТИЛИ ДВУХКОЛОНОЧНОГО РЕЖИМА - ОТКЛЮЧЕНЫ */
+/* #song-content.split-columns pre { column-count: 2; column-gap: 30px; position: relative;}
+#song-content.split-columns pre::before { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background-color: var(--border-color); transform: translateX(-50%); z-index: 1; transition: background-color 0.3s ease; } */
+
+/* --- YouTube Player --- */
+#youtube-player-section { max-width: 600px; margin: 25px auto 15px auto; }
+#youtube-player-section h3 { text-align: center; margin-bottom: 15px; font-size: 1.1rem; font-weight: 500; color: var(--text-color); border: none; padding: 0; transition: color 0.3s ease;}
+#youtube-player-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #000; border-radius: var(--radius); margin-bottom: 15px; }
+#youtube-player-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+#youtube-video-key-display { text-align: center; margin-bottom: 10px; font-size: 0.85rem; color: var(--label-color); transition: color 0.3s ease; }

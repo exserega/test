@@ -1,0 +1,213 @@
+/* =====================================================================
+   Agape Worship App - SetList Panel Compact Mobile Overrides
+   ===================================================================== */
+
+/* Эти стили применяются с высоким приоритетом для мобильной компактности */
+
+/* === ПЕРЕОПРЕДЕЛЕНИЯ ДЛЯ КОМПАКТНОСТИ === */
+
+/* Основная панель - убираем лишние отступы */
+#setlists-panel {
+    padding: 8px !important;
+}
+
+/* Заголовок панели - компактный */
+#setlists-panel .panel-header-section {
+    padding: 8px 10px 6px 10px !important;
+}
+
+#setlists-panel .panel-title {
+    font-size: 0.95rem !important;
+}
+
+/* UI секции - компактные */
+#setlists-panel .ui-section {
+    padding: 8px 10px !important;
+    margin-bottom: 6px !important;
+    background: var(--container-background-color) !important;
+    border-radius: 6px !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+#setlists-panel .ui-section:last-child {
+    margin-bottom: 0 !important;
+}
+
+/* Заголовки секций - без CAPS */
+#setlists-panel .section-label {
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    color: var(--label-color) !important;
+    text-transform: none !important;
+    letter-spacing: 0.3px !important;
+    margin-bottom: 4px !important;
+    opacity: 0.9 !important;
+}
+
+/* Кнопка создания - компактная */
+#setlists-panel .create-btn-modern {
+    padding: 8px 10px !important;
+    min-height: 34px !important;
+    background: var(--primary-color) !important;
+    font-size: 0.85rem !important;
+    border-radius: 6px !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+#setlists-panel .create-btn-modern:hover {
+    background: var(--color-button-hover-bg) !important;
+    transform: translateY(-1px) !important;
+}
+
+#setlists-panel .btn-content i {
+    font-size: 0.85rem !important;
+    color: var(--color-button-text) !important;
+}
+
+#setlists-panel .btn-content span {
+    font-size: 0.85rem !important;
+    color: var(--color-button-text) !important;
+}
+
+/* Убираем блеск */
+#setlists-panel .btn-shine {
+    display: none !important;
+}
+
+/* Селектор - компактный */
+#setlists-panel .selector-btn {
+    padding: 6px 10px !important;
+    min-height: 34px !important;
+    font-size: 0.85rem !important;
+    background: var(--background-color) !important;
+}
+
+#setlists-panel .selector-content i {
+    font-size: 0.85rem !important;
+}
+
+#setlists-panel .selector-text {
+    font-size: 0.85rem !important;
+}
+
+#setlists-panel .selector-arrow {
+    font-size: 0.7rem !important;
+}
+
+/* Активная секция - компактная */
+#setlists-panel .active-section {
+    padding: 8px 10px !important;
+    margin: 0 !important;
+    background: var(--container-background-color) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: none !important;
+}
+
+#setlists-panel .section-header {
+    margin-bottom: 6px !important;
+}
+
+#setlists-panel .list-status {
+    font-size: 0.8rem !important;
+}
+
+#setlists-panel .list-status i {
+    font-size: 0.75rem !important;
+}
+
+#setlists-panel .count-text {
+    font-size: 0.8rem !important;
+}
+
+/* Кнопки действий - компактные */
+#setlists-panel .action-buttons {
+    gap: 6px !important;
+}
+
+#setlists-panel .action-btn {
+    padding: 6px 10px !important;
+    min-height: 30px !important;
+    font-size: 0.8rem !important;
+    border-radius: 6px !important;
+}
+
+#setlists-panel .action-btn i {
+    font-size: 0.7rem !important;
+}
+
+#setlists-panel .primary-action {
+    background: var(--primary-color) !important;
+    color: var(--color-button-text) !important;
+    border: 1px solid var(--primary-color) !important;
+}
+
+#setlists-panel .secondary-action {
+    background: transparent !important;
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Список песен - компактный */
+#setlists-panel .songs-list {
+    padding: 6px 8px !important;
+}
+
+#setlists-panel .songs-list .setlist-song-item {
+    padding: 6px 8px !important;
+    margin-bottom: 3px !important;
+    border-radius: 4px !important;
+}
+
+#setlists-panel .song-name {
+    font-size: 0.85rem !important;
+}
+
+#setlists-panel .song-meta {
+    font-size: 0.7rem !important;
+    gap: 6px !important;
+}
+
+#setlists-panel .song-key {
+    padding: 1px 4px !important;
+    font-size: 0.65rem !important;
+    border-radius: 3px !important;
+    text-transform: none !important; /* Отменяем uppercase для корректного отображения Gb, Eb, Ab и т.д. */
+}
+
+#setlists-panel .song-bpm {
+    font-size: 0.65rem !important;
+}
+
+#setlists-panel .song-action-btn {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 0.7rem !important;
+}
+
+/* Специальные переопределения для темной темы */
+body[data-theme="dark"] #setlists-panel .create-btn-modern {
+    color: #ffffff !important;
+}
+
+body[data-theme="light"] #setlists-panel .create-btn-modern {
+    color: #ffffff !important;
+}
+
+/* Адаптация для очень маленьких экранов */
+@media (max-width: 380px) {
+    #setlists-panel {
+        padding: 6px !important;
+    }
+    
+    #setlists-panel .ui-section {
+        padding: 6px 8px !important;
+    }
+    
+    #setlists-panel .action-btn span {
+        display: none !important;
+    }
+    
+    #setlists-panel .action-btn {
+        padding: 8px !important;
+    }
+}

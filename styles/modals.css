@@ -1,0 +1,849 @@
+/* ======================================== */
+/* Modals & Editor - Agape Worship v2.3    */
+/* ======================================== */
+
+/* --- Loading Indicator --- */
+#loading-indicator { display: none; position: fixed; top: 15px; left: 50%; transform: translateX(-50%); background-color: rgba(40, 40, 40, 0.9); color: var(--color-notification-text); padding: 8px 18px; border-radius: var(--radius); z-index: 1002; font-size: 0.9rem; box-shadow: none; border: 1px solid var(--border-color); }
+
+/* --- Стили для модального окна --- */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); backdrop-filter: none;
+    display: none; /* Изначально скрыто */
+    justify-content: center; align-items: center;
+    z-index: 2500; /* Выше чем боковые панели и презентация */
+    opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
+}
+.modal-overlay.visible {
+    display: flex; /* Показываем через flex */
+    opacity: 1; pointer-events: auto;
+}
+
+.modal-content {
+    background-color: var(--container-background-color); color: var(--text-color);
+    padding: 25px; border-radius: var(--radius);
+    box-shadow: none; min-width: 300px; max-width: 90%; width: 500px;
+    position: relative; transform: scale(0.9);
+    transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+    border: 2px solid var(--border-color); /* Добавляем границу вместо тени */
+}
+.modal-overlay.visible .modal-content { transform: scale(1); }
+
+.modal-title {
+    margin-top: 0; margin-bottom: 15px; font-size: 1.2rem; font-weight: 600;
+    color: var(--primary-color); text-align: center;
+    border-bottom: 1px solid var(--border-color); padding-bottom: 10px;
+}
+
+#note-edit-textarea {
+    width: 100%; box-sizing: border-box; margin-bottom: 20px;
+    padding: 10px; border-radius: var(--radius); font-size: 0.95rem;
+    border: 1px solid var(--border-color); background-color: var(--input-bg-color);
+    color: var(--text-color); resize: vertical; min-height: 100px;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+ #note-edit-textarea:focus {
+    border-color: var(--primary-color); outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 25%, transparent);
+}
+
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+/* .modal-button и .modal-button.primary используют базовые стили кнопок */
+.modal-button.secondary {
+    background: var(--hover-color) !important; color: var(--text-color) !important;
+    box-shadow: none !important;
+}
+ .modal-button.secondary:hover {
+    background: var(--border-color) !important;
+    transform: none !important; box-shadow: none !important;
+}
+
+.modal-close-x {
+    position: absolute; top: 10px; right: 15px; background: none; border: none;
+    font-size: 1.8rem; font-weight: bold; color: var(--label-color);
+    cursor: pointer; padding: 0; line-height: 1;
+    transition: color 0.2s ease;
+}
+.modal-close-x:hover { color: var(--danger-color); }
+
+/* ============================================ */
+/* === СТИЛИ ДЛЯ НОВЫХ КНОПОК (Аккорды и Копирование) === */
+/* ============================================ */
+
+/* --- Логика скрытия аккордов --- */
+#song-content.chords-hidden .chord,
+.presentation-content.chords-hidden .chord {
+    /* Полностью скрываем аккорды из потока документа */
+    display: none !important;
+}
+
+/* Сжимаем пустые строки при скрытии аккордов */
+#song-content.chords-hidden pre,
+.presentation-content.chords-hidden pre {
+    line-height: 1.0; /* Максимально сжимаем междустрочный интервал */
+}
+
+#song-content.chords-hidden .song-block-content,
+.presentation-content.chords-hidden .song-block-content {
+    line-height: 1.1; /* Чуть больше для читаемости */
+}
+
+/* Режим "только аккорды" - скрываем весь текст кроме аккордов */
+#song-content.chords-only-mode,
+.presentation-content.chords-only-mode {
+    line-height: 2.5; /* Увеличиваем междустрочный интервал для аккордов */
+}
+
+#song-content.chords-only-mode .song-block-content,
+.presentation-content.chords-only-mode .song-block-content {
+    font-size: 0; /* Скрываем весь текст делая размер шрифта 0 */
+    line-height: 0;
+}
+
+#song-content.chords-only-mode .chord,
+.presentation-content.chords-only-mode .chord {
+    font-size: var(--lyrics-font-size); /* Восстанавливаем размер шрифта для аккордов */
+    line-height: 2.5; /* Устанавливаем междустрочный интервал */
+    display: inline;
+    background-color: color-mix(in srgb, var(--accent-color) 2%, transparent); /* Тот же еле заметный фон как у обычных аккордов */
+    padding: 1px 2px; /* Минимальный padding как у обычных аккордов */
+    border-radius: 3px; /* Как у обычных аккордов */
+    margin: 0; /* Без отступов между аккордами */
+    border: none; /* Убираем все границы */
+    cursor: default !important; /* Убираем указатель для кликов */
+    pointer-events: none !important; /* Полностью отключаем события мыши */
+}
+
+/* --- Кнопка Скрыть/Показать аккорды --- */
+#toggle-chords-button {
+    /* Наследует .icon-button и .icon-button.simple */
+    padding: 0 10px; /* Паддинг для текста и иконки */
+    width: auto; /* Авто-ширина по контенту */
+    height: 38px; /* Такая же высота, как у соседей */
+    font-size: 0.85rem;
+    margin-left: 5px; /* Небольшой отступ слева */
+    order: -1; /* Можно попробовать подвинуть левее кнопки Split */
+    position: relative; /* Для позиционирования псевдоэлемента */
+}
+#toggle-chords-button i {
+    margin-right: 6px; /* Отступ иконки от текста */
+    font-size: 1em; /* Увеличиваем для единообразия с иконкой T */
+    position: relative;
+}
+
+/* Перечеркивание кнопки скрытия аккордов - НЕ от угла до угла */
+#toggle-chords-button::after {
+    content: '';
+    position: absolute;
+    top: 25%; /* Начинаем не с самого верха */
+    left: 10%; /* Начинаем не с самого левого края */
+    width: 80%; /* Не на всю ширину */
+    height: 50%; /* Не на всю высоту */
+    background: linear-gradient(to top right, transparent 48.5%, currentColor 48.5%, currentColor 51.5%, transparent 51.5%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Активное состояние кнопки скрытия аккордов */
+#toggle-chords-button.chords-hidden-active {
+    background-color: var(--primary-color) !important;
+    color: var(--button-text-color) !important;
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Кнопка Только аккорды --- */
+#chords-only-button {
+    /* Наследует .icon-button и .icon-button.simple */
+    padding: 0 10px; /* Паддинг для текста и иконки */
+    width: auto; /* Авто-ширина по контенту */
+    height: 38px; /* Такая же высота, как у соседей */
+    font-size: 0.85rem;
+    margin-left: 5px; /* Небольшой отступ слева */
+    position: relative; /* Для позиционирования псевдоэлемента */
+}
+#chords-only-button .text-icon {
+    margin-right: 6px; /* Отступ иконки от текста */
+    font-size: 1em; /* Увеличиваем до размера иконки гитары */
+    font-weight: 700; /* Делаем чуть жирнее для лучшей видимости */
+    position: relative;
+}
+
+/* Перечеркивание кнопки "только аккорды" - НЕ от угла до угла */
+#chords-only-button::after {
+    content: '';
+    position: absolute;
+    top: 25%; /* Синхронизируем с кнопкой скрытия аккордов */
+    left: 10%; /* Синхронизируем с кнопкой скрытия аккордов */
+    width: 80%; /* Синхронизируем с кнопкой скрытия аккордов */
+    height: 50%; /* Синхронизируем с кнопкой скрытия аккордов */
+    background: linear-gradient(to top right, transparent 48.5%, currentColor 48.5%, currentColor 51.5%, transparent 51.5%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Активное состояние кнопки "только аккорды" */
+#chords-only-button.chords-only-active {
+    background-color: var(--accent-color) !important;
+    color: var(--button-text-color) !important;
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Кнопка Копировать текст над началом текста --- */
+#copy-text-button {
+    /* Убираем старые стили позиционирования, теперь кнопка в ряду с другими */
+    /* border наследуется от icon-button.simple */
+}
+
+/* hover наследуется от icon-button.simple */
+
+/* Стиль для состояния "Скопировано" */
+#copy-text-button.copied {
+     background-color: var(--secondary-color) !important;
+     border-color: var(--secondary-color) !important;
+     color: var(--button-text-color) !important;
+     opacity: 1;
+}
+body[data-theme="light"] #copy-text-button.copied {
+     background-color: var(--secondary-color) !important;
+     border-color: var(--secondary-color) !important;
+     color: var(--color-button-text) !important;
+}
+
+/* --- SONG EDITOR STYLES --- */
+
+/* Модальное окно редактора */
+.song-editor-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(2px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000; /* Выше всех остальных элементов */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.song-editor-overlay.visible {
+    display: flex;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.song-editor-modal {
+    background: var(--container-background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 800px;
+    height: 90%;
+    max-height: 700px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.song-editor-overlay.visible .song-editor-modal {
+    transform: scale(1);
+}
+
+/* Заголовок редактора */
+.song-editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px 15px 25px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--container-background-color);
+    flex-shrink: 0;
+}
+
+.song-editor-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+#close-editor-button {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+#close-editor-button:hover {
+    background: var(--hover-color);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+/* Основной контент редактора */
+.song-editor-content {
+    flex: 1;
+    padding: 20px 25px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.editor-info {
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+#edit-status-info {
+    color: var(--label-color);
+    flex: 1;
+}
+
+/* Textarea для редактирования */
+.song-edit-textarea {
+    flex: 1;
+    width: 100%;
+    min-height: 0; /* Убираем минимальную высоту */
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--background-color);
+    color: var(--text-color);
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: none; /* Отключаем resize */
+    box-sizing: border-box;
+    
+    /* Улучшенная прокрутка */
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    
+    /* Поддержка свайпов на мобильных */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    
+    /* Кастомный скроллбар */
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) var(--border-color);
+}
+
+/* Кастомный скроллбар для WebKit браузеров */
+.song-edit-textarea::-webkit-scrollbar {
+    width: 8px;
+}
+
+.song-edit-textarea::-webkit-scrollbar-track {
+    background: var(--border-color);
+    border-radius: 4px;
+    margin: 2px 0;
+}
+
+.song-edit-textarea::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.song-edit-textarea::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--primary-color) 80%, black);
+}
+
+.song-edit-textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-color) 20%, transparent);
+}
+
+/* Футер с кнопками */
+.song-editor-footer {
+    padding: 20px 25px;
+    border-top: 1px solid var(--border-color);
+    background: var(--container-background-color);
+    flex-shrink: 0;
+}
+
+.editor-controls {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.editor-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.editor-button:hover {
+    transform: translateY(-1px);
+}
+
+.editor-button.save {
+    background: var(--accent-color);
+    color: var(--color-button-text);
+}
+
+.editor-button.save:hover {
+    background: color-mix(in srgb, var(--accent-color) 85%, black);
+}
+
+.editor-button.cancel {
+    background: var(--border-color);
+    color: var(--text-color);
+}
+
+.editor-button.cancel:hover {
+    background: color-mix(in srgb, var(--border-color) 80%, black);
+}
+
+.editor-button.revert {
+    background: #e74c3c;
+    color: var(--color-error-text);
+}
+
+.editor-button.revert:hover {
+    background: #c0392b;
+}
+
+/* Мобильные стили для редактора */
+@media (max-width: 768px) {
+    .song-controls {
+        position: static;
+        margin-bottom: 10px;
+        justify-content: flex-end;
+    }
+    
+    .song-edit-textarea {
+        min-height: 300px;
+        font-size: 16px; /* Предотвращает зум на iOS */
+    }
+    
+    .editor-controls {
+        flex-direction: column;
+    }
+    
+    .editor-button {
+        justify-content: center;
+        padding: 12px 16px;
+    }
+}
+
+/* ======================================== */
+/* Setlist Select Overlay - Compact Design  */
+/* ======================================== */
+
+.setlist-select-modal.compact {
+    max-width: 420px;
+    width: 90%;
+    padding: 0;
+}
+
+.modal-header.compact {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header.compact h3 {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.modal-body.compact {
+    padding: 1rem;
+}
+
+/* Компактная информация о песне */
+.song-info-compact {
+    background: var(--bg-secondary);
+    padding: 0.75rem;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+}
+
+.song-info-compact i {
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+.song-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.song-details .song-name {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+/* Текст "Тональность:" в overlay добавления в сет-лист */
+.song-details .song-key {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    opacity: 0.7; /* Делаем текст чуть прозрачнее для визуального разделения */
+    background: none !important; /* Убираем фон у текста "Тональность:" */
+    border: none !important;
+    padding: 0 !important;
+    text-transform: none !important; /* Отменяем uppercase из родительских стилей */
+}
+
+/* Блок с отображением выбранной тональности (G, Eb и т.д.) */
+.song-details .song-key #adding-song-key {
+    color: var(--accent-color); /* Яркий цвет для выделения тональности */
+    font-weight: 600;
+    font-size: 0.95rem; /* Чуть больше основного текста */
+    margin-left: 0.35rem;
+    padding: 0.2rem 0.6rem;
+    background: var(--hover-color); /* Нейтральный фон для контраста */
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    display: inline-block;
+    text-transform: none !important; /* ВАЖНО: отменяем uppercase для корректного отображения Eb, Ab и т.д. */
+    letter-spacing: normal; /* Отменяем letter-spacing из общих стилей */
+    opacity: 1; /* Полная непрозрачность для самой тональности */
+}
+
+/* Секция существующих сет-листов */
+.existing-setlists-section {
+    margin-bottom: 1rem;
+}
+
+.section-title {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* Сетка сет-листов в overlay добавления - вертикальный список */
+.setlists-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 200px; /* Ограничиваем высоту для компактности */
+    overflow-y: auto; /* Скролл при большом количестве сет-листов */
+    padding-right: 0.5rem;
+}
+
+/* Стилизация скроллбара */
+.setlists-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.setlists-grid::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 3px;
+}
+
+.setlists-grid::-webkit-scrollbar-thumb {
+    background: var(--text-tertiary);
+    border-radius: 3px;
+}
+
+.setlists-grid::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+.setlist-item {
+    background: var(--bg-secondary);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.setlist-item:hover {
+    border-color: var(--primary-color);
+    background: var(--bg-tertiary);
+}
+
+/* Визуальная индикация выбранного сет-листа при клике */
+.setlist-item.selected {
+    border-color: var(--primary-color);
+    background: rgba(var(--primary-rgb), 0.1);
+}
+
+.setlist-name {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.setlist-songs-count {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+
+.modern-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.modern-select:hover {
+    border-color: var(--primary-color);
+}
+
+.modern-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+}
+
+/* Компактное создание нового сет-листа */
+.create-new-compact {
+    border-top: 1px solid var(--border-color);
+    padding-top: 0.75rem;
+}
+
+.or-text {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.new-setlist-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.compact-input {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.compact-input:hover {
+    border-color: var(--primary-color);
+}
+
+.compact-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
+}
+
+.compact-input::placeholder {
+    color: var(--text-tertiary);
+    font-size: 0.8rem;
+}
+
+.compact-button {
+    padding: 0.5rem 1rem;
+    background: var(--primary-color);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+}
+
+.compact-button:hover:not(:disabled) {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.compact-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.compact-button i {
+    font-size: 0.75rem;
+}
+
+.modern-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.modern-input:hover {
+    border-color: var(--primary-color);
+}
+
+.modern-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+}
+
+.modern-input::placeholder {
+    color: var(--text-tertiary);
+}
+
+/* Кнопки в footer */
+.modal-footer {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.primary-button,
+.secondary-button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: inherit;
+}
+
+.primary-button {
+    background: var(--primary-color);
+    color: #ffffff;
+}
+
+.primary-button:hover:not(:disabled) {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
+}
+
+.primary-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.secondary-button {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.secondary-button:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--text-tertiary);
+}
+
+/* Текстовые сообщения в сетке */
+.loading-text,
+.empty-text,
+.error-text {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--text-tertiary);
+    font-size: 0.9rem;
+}
+
+.error-text {
+    color: var(--error-color, #dc2626);
+}
+
+/* Адаптация под светлую тему */
+[data-theme="light"] .song-info-compact {
+    background: #f8f9fa;
+}
+
+[data-theme="light"] .setlist-item {
+    background: #ffffff;
+}
+
+[data-theme="light"] .compact-input {
+    background: #ffffff;
+}
+
+[data-theme="light"] .setlist-item:hover {
+    background: #f3f4f6;
+}
+
+[data-theme="light"] .setlist-item.selected {
+    background: rgba(99, 102, 241, 0.05);
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+    .setlist-select-modal {
+        max-width: 100%;
+        width: calc(100% - 2rem);
+        margin: 1rem;
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+    }
+    
+    .primary-button,
+    .secondary-button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* === Light Theme Overrides for Setlist Selector === */
+/* Адаптация блока тональности для светлой темы - используем те же переменные, которые автоматически меняются */
+body[data-theme="light"] .song-details .song-key #adding-song-key {
+    color: var(--text-color); /* В светлой теме это будет темный текст */
+    background: var(--hover-color); /* В светлой теме это будет светло-серый фон */
+    border-color: var(--border-color); /* В светлой теме это будет светлая рамка */
+}
