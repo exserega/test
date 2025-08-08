@@ -1,0 +1,33 @@
+{
+  "appId": "com.agapeworship.app",
+  "appName": "Agape Worship",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https",
+    "iosScheme": "https",
+    "hostname": "agapeworship.app"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#111827",
+      "showSpinner": false,
+      "androidSpinnerStyle": "large",
+      "iosSpinnerStyle": "small",
+      "spinnerColor": "#22d3ee"
+    },
+    "StatusBar": {
+      "style": "dark",
+      "backgroundColor": "#111827"
+    }
+  },
+  "android": {
+    "minWebViewVersion": 60,
+    "allowMixedContent": true
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "scrollEnabled": true
+  }
+}
